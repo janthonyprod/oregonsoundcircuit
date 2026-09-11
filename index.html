@@ -8,67 +8,71 @@
 <title>Oregon Sound Circuit, Policy Tracker</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <style>
-:root{--text:#1a1a1a;--text-secondary:#555;--text-tertiary:#888;--accent:#1f5f8b;
---bg:#f7f7f4;--rule:#e2e2de;--green:#1f7a3f;--amber:#a8720d;--red:#a33;--purple:#553c9a}
+:root{--text:#1a1a1a;--text-secondary:#555;--text-tertiary:#8a8a8a;--accent:#1f5f8b;
+--bg:#f7f7f4;--panel:#fff;--rule:#e3e3df;--green:#1f7a3f;--amber:#a8720d;--red:#a33;--purple:#553c9a}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Inter',sans-serif;
-background:var(--bg);color:var(--text);font-size:15px;line-height:1.5}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Inter',sans-serif;background:var(--bg);color:var(--text);font-size:14.5px;line-height:1.45}
+a{color:var(--accent)}
 .login{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
-.login-box{background:#fff;border:1px solid var(--rule);border-radius:10px;padding:36px;max-width:400px;width:100%}
+.login-box{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:36px;max-width:400px;width:100%}
 .login-box h1{font-size:19px;margin-bottom:2px}
 .login-box .sub{font-size:13px;color:var(--text-tertiary);margin-bottom:20px}
-.login-box input{width:100%;padding:10px 12px;border:1px solid var(--rule);border-radius:6px;
-font:inherit;font-size:14px;margin-bottom:10px;background:var(--bg)}
+.login-box input{width:100%;padding:10px 12px;border:1px solid var(--rule);border-radius:6px;font:inherit;font-size:14px;margin-bottom:10px;background:var(--bg)}
 .login-box input:focus{outline:none;border-color:var(--accent)}
 .err{color:var(--red);font-size:12.5px;margin-bottom:10px;display:none}
-.btn{display:inline-block;border:none;border-radius:6px;padding:7px 13px;font:inherit;
-font-size:13px;font-weight:600;cursor:pointer;background:#eee;color:var(--text)}
+.btn{display:inline-block;border:none;border-radius:6px;padding:6px 12px;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;background:#ececea;color:var(--text)}
 .btn-primary{background:var(--accent);color:#fff}
 .btn-green{background:var(--green);color:#fff}
 .btn-amber{background:#fff;color:var(--amber);border:1px solid var(--amber)}
 .btn-red{background:#fff;color:var(--red);border:1px solid var(--red)}
 .btn-link{background:none;color:var(--accent);padding:4px 6px;font-weight:500}
-.btn:disabled{opacity:.5;cursor:default}
-header{display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid var(--rule);
-background:#fff;position:sticky;top:0;z-index:5;flex-wrap:wrap}
+header{display:flex;align-items:center;gap:10px;padding:10px 20px;border-bottom:1px solid var(--rule);background:var(--panel);position:sticky;top:0;z-index:5;flex-wrap:wrap}
 header h1{font-size:15px;margin-right:auto;white-space:nowrap}
 header h1 span{color:var(--text-tertiary);font-weight:400}
 .tabs{display:flex;gap:4px;flex-wrap:wrap}
-.tab{padding:5px 11px;border-radius:20px;font-size:12.5px;cursor:pointer;border:1px solid var(--rule);background:#fff}
+.tab{padding:5px 12px;border-radius:20px;font-size:13px;cursor:pointer;border:1px solid var(--rule);background:var(--panel)}
 .tab.active{background:var(--text);color:#fff;border-color:var(--text)}
-.count{font-size:11px;color:inherit;opacity:.65;margin-left:4px}
-.toolbar{max-width:940px;margin:0 auto;padding:14px 20px 0;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.toolbar input{padding:7px 10px;border:1px solid var(--rule);border-radius:6px;font:inherit;font-size:13px;min-width:220px;background:#fff}
-.chip{padding:4px 10px;border-radius:14px;font-size:12px;cursor:pointer;border:1px solid var(--rule);background:#fff;color:var(--text-secondary)}
+.count{font-size:11px;opacity:.6;margin-left:4px}
+.toolbar{max-width:980px;margin:0 auto;padding:12px 20px 0;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.toolbar input{padding:6px 10px;border:1px solid var(--rule);border-radius:6px;font:inherit;font-size:13px;min-width:230px;background:var(--panel)}
+.chip{padding:4px 11px;border-radius:14px;font-size:12px;cursor:pointer;border:1px solid var(--rule);background:var(--panel);color:var(--text-secondary)}
 .chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-main{max-width:940px;margin:0 auto;padding:14px 20px 20px}
-.card{background:#fff;border:1px solid var(--rule);border-radius:10px;padding:14px 16px;margin-bottom:10px}
-.card h3{font-size:14.5px;margin-bottom:3px;font-weight:600;line-height:1.35}
-.card h3 a{color:var(--text);text-decoration:none}
-.card h3 a:hover{color:var(--accent)}
-.meta{font-size:12.5px;color:var(--text-secondary);margin-bottom:6px}
-.why{font-size:11.5px;color:var(--text-tertiary);margin-bottom:6px}
-.jur{display:inline-block;font-size:11px;font-weight:700;padding:1px 6px;border-radius:4px;background:#2b6cb0;color:#fff;margin-right:6px;vertical-align:1px}
+.hint{font-size:12.5px;color:var(--text-tertiary);margin-left:auto}
+main{max-width:980px;margin:0 auto;padding:10px 20px 30px}
+h2{font-size:13px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.05em;margin:22px 0 6px;display:flex;align-items:center;gap:8px}
+h2 .n{font-weight:500;color:var(--text-tertiary);text-transform:none;letter-spacing:0}
+h2 .toggle{font-size:12px;font-weight:500;text-transform:none;letter-spacing:0;color:var(--accent);cursor:pointer;margin-left:auto}
+.group{background:var(--panel);border:1px solid var(--rule);border-radius:8px;overflow:hidden}
+.row{display:flex;align-items:baseline;gap:8px;padding:8px 12px;border-top:1px solid var(--rule);cursor:pointer}
+.row:first-child{border-top:none}
+.row:hover{background:#fafaf8}
+.row.open{background:#f4f6f9}
+.num{font-weight:600;white-space:nowrap;font-size:13px;min-width:74px}
+.title{flex:1;min-width:0}
+.jur{display:inline-block;font-size:10.5px;font-weight:700;padding:1px 5px;border-radius:4px;background:#2b6cb0;color:#fff;margin-right:6px;vertical-align:1px;min-width:26px;text-align:center}
 .jur.OR{background:var(--green)}.jur.US{background:var(--purple)}
-.stage{display:inline-block;font-size:11px;padding:1px 7px;border-radius:10px;background:#edf2f7;color:#334;margin-left:6px;vertical-align:1px;font-weight:500}
-.stage.good{background:#def7e6;color:#0a7d38}.stage.warm{background:#fff3d6;color:#8a5a00}
+.stage{white-space:nowrap;font-size:11.5px;padding:1px 7px;border-radius:10px;background:#edf2f7;color:#334;font-weight:500}
+.stage.good{background:#def7e6;color:#0a7d38}.stage.warm{background:#fff3d6;color:#8a5a00}.stage.hot{background:#fde6cf;color:#9a3d00}
 .stage.bad{background:#fde2e2;color:#a11}.stage.dim{background:#eee;color:#888}
-.pill{font-size:11px;padding:1px 7px;border-radius:10px;background:var(--bg);border:1px solid var(--rule);color:var(--text-secondary);margin-left:4px}
-.pill.watch{background:#fff3d6;border-color:#f0d9a0;color:#8a5a00}
-.pill.relevant{background:#def7e6;border-color:#b7e4c4;color:#0a7d38}
-.deadline{color:var(--red);font-weight:600}
-.notes{font-size:12.5px;color:var(--text-secondary);background:var(--bg);border-radius:6px;padding:8px 10px;white-space:pre-wrap;margin:6px 0}
-.detail{display:none;margin-top:8px;border-top:1px dashed var(--rule);padding-top:8px}
-.detail p{font-size:13px;color:var(--text-secondary);margin-bottom:8px;white-space:pre-wrap}
-.hist{font-size:12px;color:var(--text-secondary);margin:2px 0 2px 8px}
+.date{white-space:nowrap;font-size:12px;color:var(--text-tertiary);min-width:78px;text-align:right}
+.flag{font-size:11.5px;color:var(--red);font-weight:600;white-space:nowrap}
+.mark{font-size:11px;padding:1px 6px;border-radius:10px;border:1px solid var(--rule);color:var(--text-secondary);white-space:nowrap}
+.mark.watch{background:#fff3d6;border-color:#f0d9a0;color:#8a5a00}.mark.relevant{background:#def7e6;border-color:#b7e4c4;color:#0a7d38}
+.panel{padding:10px 14px 12px 14px;border-top:1px solid var(--rule);background:#f4f6f9;font-size:13px}
+.panel .full{font-weight:600;margin-bottom:4px}
+.panel .meta{color:var(--text-secondary);margin-bottom:6px}
+.panel .why{color:var(--text-tertiary);font-size:12px;margin-bottom:6px}
+.panel p{color:var(--text-secondary);white-space:pre-wrap;margin:6px 0;max-height:220px;overflow:auto}
+.hist{font-size:12px;color:var(--text-secondary);margin:2px 0 2px 6px}
 .hist b{color:var(--text)}
-.actions{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:6px}
-textarea.note{width:100%;min-height:54px;padding:8px;border:1px solid var(--rule);border-radius:6px;font:inherit;font-size:13px;margin-top:6px;background:#fff}
-.event{font-size:13px;margin:2px 0 2px 10px;color:var(--text-secondary)}
+.actions{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:8px}
+.notes{font-size:12.5px;color:var(--text-secondary);background:#fff;border:1px solid var(--rule);border-radius:6px;padding:6px 8px;white-space:pre-wrap;margin:6px 0}
+textarea.note{width:100%;min-height:50px;padding:8px;border:1px solid var(--rule);border-radius:6px;font:inherit;font-size:13px;margin-top:6px;background:#fff}
+.event{font-size:12.5px;color:var(--text-secondary);margin:1px 0 1px 6px}
 .event b{color:var(--text)}
-.empty{color:var(--text-tertiary);text-align:center;padding:40px 0}
-.section{font-size:13px;font-weight:700;color:var(--text-secondary);margin:18px 0 8px;text-transform:uppercase;letter-spacing:.04em}
-footer{max-width:940px;margin:0 auto;padding:8px 20px 40px;font-size:12px;color:var(--text-tertiary);line-height:1.6}
+.empty{color:var(--text-tertiary);padding:14px 12px;font-size:13px}
+.lead{font-size:13px;color:var(--text-secondary);margin:14px 0 0}
+footer{max-width:980px;margin:0 auto;padding:8px 20px 40px;font-size:12px;color:var(--text-tertiary);line-height:1.6;border-top:1px solid var(--rule)}
 footer a{color:var(--text-secondary)}
 </style>
 </head>
@@ -81,7 +85,7 @@ footer a{color:var(--text-secondary)}
     <div id="loginErr" class="err">Sign-in failed</div>
     <input type="email" id="email" placeholder="Email" autocomplete="username">
     <input type="password" id="pass" placeholder="Password" autocomplete="current-password">
-    <button id="loginBtn" class="btn btn-primary" style="width:100%">Sign in</button>
+    <button id="loginBtn" class="btn btn-primary" style="width:100%;padding:9px">Sign in</button>
   </div>
 </div>
 
@@ -89,15 +93,15 @@ footer a{color:var(--text-secondary)}
   <header>
     <h1>Oregon Sound Circuit <span>Policy Tracker</span></h1>
     <nav class="tabs" id="tabs"></nav>
-    <button class="btn" id="refreshBtn" title="Reload">&#8635;</button>
+    <button class="btn" id="refreshBtn" title="Reload from the database">&#8635;</button>
     <button class="btn" id="outBtn">Sign out</button>
   </header>
-  <div class="toolbar" id="toolbar">
-    <input type="search" id="search" placeholder="Filter by title, number, sponsor">
-    <span class="chip active" data-jur="all">All</span>
-    <span class="chip" data-jur="US">Federal</span>
-    <span class="chip" data-jur="OR">Oregon</span>
-    <span class="chip" data-jur="states">Other states</span>
+  <div class="toolbar">
+    <span class="chip active" data-topic="all">Both topics</span>
+    <span class="chip" data-topic="ai_music">AI + Music</span>
+    <span class="chip" data-topic="ticketing">Ticketing</span>
+    <input type="search" id="search" placeholder="Search title, number, sponsor">
+    <span class="hint" id="hint"></span>
   </div>
   <main id="list"></main>
   <footer id="foot"></footer>
@@ -112,55 +116,65 @@ var SB_KEY = 'sb_publishable__doHKn0KYVVPUnYqVdchnw_TBUq5eYy';
 var sb = window.supabase.createClient(SB_URL, SB_KEY);
 var $ = function(id){ return document.getElementById(id); };
 var TODAY = new Date().toISOString().slice(0, 10);
-var LIVE = ['new', 'watch', 'relevant'];
-var COLS = 'id,source,external_id,kind,jurisdiction,session_name,bill_number,bill_key,title,url,source_url,agency,' +
-  'sponsor_summary,last_action_at,last_action,next_event_at,comments_close_on,effective_on,status_stage,lane,' +
-  'match_terms,review_status,reviewed_by,reviewed_at,notes,first_seen,last_changed_at,detail_fetched_at';
+function daysAgo(n){ return new Date(Date.now() - n * 86400000).toISOString().slice(0, 10); }
 
-var TABS = [
-  {key:'movement',  label:'Movement'},
-  {key:'deadlines', label:'Deadlines'},
-  {key:'ai_music',  label:'AI + Music', lane:'ai_music', status:LIVE},
-  {key:'ticketing', label:'Ticketing',  lane:'ticketing', status:LIVE},
-  {key:'music_policy', label:'Music policy', lane:'music_policy', status:LIVE},
-  {key:'ai_general', label:'AI general', lane:'ai_general', status:LIVE},
-  {key:'watch',     label:'Watchlist', status:['watch','relevant']},
-  {key:'dismissed', label:'Dismissed', status:['dismissed']},
-  {key:'noise',     label:'Noise', status:['noise']}
-];
+var COLS = 'id,source,kind,jurisdiction,session_name,bill_number,bill_key,title,url,source_url,agency,' +
+  'sponsor_summary,introduced_at,last_action_at,last_action,next_event_at,comments_close_on,effective_on,' +
+  'status_stage,lane,match_terms,review_status,reviewed_by,reviewed_at,notes,first_seen,last_changed_at';
+var TOPICS = ['ai_music', 'ticketing'];
+var LIVE = ['new', 'watch', 'relevant'];
+var ACTIVE = ['passed_both', 'passed_chamber', 'floor', 'committee', 'introduced', 'prefiled', 'unknown'];
+var RANK = {passed_both:7, passed_chamber:6, floor:5, committee:4, introduced:3, prefiled:2, unknown:1};
 var STAGE_LABEL = {prefiled:'Prefiled', introduced:'Introduced', committee:'In committee', floor:'On the floor',
-  passed_chamber:'Passed one chamber', passed_both:'Passed both chambers', enacted:'Enacted', vetoed:'Vetoed',
+  passed_chamber:'Passed one chamber', passed_both:'Awaiting signature', enacted:'Enacted', vetoed:'Vetoed',
   dead:'Dead', proposed:'Proposed rule', final:'Final rule', notice:'Notice', unknown:'Detail pending'};
-var STAGE_CLASS = {enacted:'good', passed_both:'good', final:'good', passed_chamber:'warm', floor:'warm',
-  proposed:'warm', vetoed:'bad', dead:'dim'};
-var current = 'movement', jur = 'all', query = '', user = null, cache = {};
+var STAGE_CLASS = {enacted:'good', final:'good', passed_both:'hot', passed_chamber:'warm', floor:'warm',
+  proposed:'warm', vetoed:'bad', dead:'dim', unknown:'dim'};
+var VIEWS = [
+  {key:'now', label:'Now'},
+  {key:'active', label:'Active'},
+  {key:'enacted', label:'Enacted'},
+  {key:'rules', label:'Rulemaking'},
+  {key:'watch', label:'Watchlist'},
+  {key:'archive', label:'Archive'}
+];
+var ARCHIVE_SETS = [
+  {key:'dead', label:'Dead', test:function(b){ return isTopic(b) && b.status_stage === 'dead' && LIVE.indexOf(b.review_status) >= 0; }},
+  {key:'vetoed', label:'Vetoed', test:function(b){ return isTopic(b) && b.status_stage === 'vetoed'; }},
+  {key:'dismissed', label:'Dismissed', test:function(b){ return b.review_status === 'dismissed'; }},
+  {key:'noise', label:'Noise (rule)', test:function(b){ return b.review_status === 'noise'; }},
+  {key:'ai_general', label:'AI, not music', test:function(b){ return b.lane === 'ai_general' && LIVE.indexOf(b.review_status) >= 0; }},
+  {key:'music_policy', label:'Music industry, no AI', test:function(b){ return b.lane === 'music_policy' && LIVE.indexOf(b.review_status) >= 0; }}
+];
+
+var view = 'now', topic = 'all', query = '', archiveSet = 'dead', user = null;
+var bills = [], events = [], lastRun = null, open = {}, showStates = {};
 
 function esc(s){ var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
-function btn(t, cls, fn){ var b = document.createElement('button'); b.className = cls; b.textContent = t; b.onclick = fn; return b; }
-function jurPill(j){ return '<span class="jur ' + esc(j) + '">' + esc(j) + '</span>'; }
+function btn(t, cls, fn){ var b = document.createElement('button'); b.className = cls; b.textContent = t; b.onclick = function(e){ e.stopPropagation(); fn(); }; return b; }
+function el(tag, cls, html){ var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
 function stagePill(s){ return '<span class="stage ' + (STAGE_CLASS[s] || '') + '">' + esc(STAGE_LABEL[s] || s || 'Detail pending') + '</span>'; }
-function jurOrder(j){ return j === 'US' ? 0 : j === 'OR' ? 1 : 2; }
+function jurPill(j){ return '<span class="jur ' + esc(j) + '">' + esc(j) + '</span>'; }
+function jurName(j){ return j === 'US' ? 'Federal' : j === 'OR' ? 'Oregon' : j; }
+function isTopic(b){ return TOPICS.indexOf(b.lane) >= 0; }
+function isLive(b){ return LIVE.indexOf(b.review_status) >= 0; }
+function isActive(b){ return ACTIVE.indexOf(b.status_stage) >= 0 && b.source !== 'federal_register'; }
+function nextDate(b){ return [b.comments_close_on, b.next_event_at].filter(function(d){ return d && d >= TODAY; }).sort()[0] || null; }
 
-function passesFilters(b){
-  if (jur === 'US' && b.jurisdiction !== 'US') return false;
-  if (jur === 'OR' && b.jurisdiction !== 'OR') return false;
-  if (jur === 'states' && (b.jurisdiction === 'US' || b.jurisdiction === 'OR')) return false;
+function passes(b){
+  if (topic !== 'all' && b.lane !== topic) return false;
   if (query){
-    var hay = ((b.title || '') + ' ' + (b.bill_number || '') + ' ' + (b.sponsor_summary || '') + ' ' + (b.agency || '')).toLowerCase();
+    var hay = ((b.title || '') + ' ' + (b.bill_number || '') + ' ' + (b.sponsor_summary || '') + ' ' + (b.agency || '') + ' ' + (b.jurisdiction || '')).toLowerCase();
     if (hay.indexOf(query) < 0) return false;
   }
   return true;
 }
 
-// Oregon bills arrive from both OLIS and LegiScan; show the OLIS copy only.
+// Oregon bills arrive from both OLIS and LegiScan; keep the OLIS copy.
 function dedupe(rows){
-  var seen = {}, out = [];
-  rows.forEach(function(b){ if (b.source === 'olis' && b.bill_key) seen[b.bill_key] = true; });
-  rows.forEach(function(b){
-    if (b.source === 'legiscan' && b.bill_key && seen[b.bill_key]) return;
-    out.push(b);
-  });
-  return out;
+  var olis = {};
+  rows.forEach(function(b){ if (b.source === 'olis' && b.bill_key) olis[b.bill_key] = true; });
+  return rows.filter(function(b){ return !(b.source === 'legiscan' && b.bill_key && olis[b.bill_key]); });
 }
 
 // PostgREST caps a select at 1000 rows, so page through explicitly.
@@ -176,193 +190,284 @@ function fetchAll(build){
   return page(0);
 }
 
-function card(b, extra){
-  var el = document.createElement('div'); el.className = 'card'; el.dataset.id = b.id;
-  var h = '<h3>' + jurPill(b.jurisdiction) + '<a href="' + esc(b.url || '#') + '" target="_blank" rel="noopener">' +
-    esc(b.bill_number || '') + ' ' + esc(b.title) + '</a>' + stagePill(b.status_stage);
-  if (b.review_status === 'watch' || b.review_status === 'relevant')
-    h += '<span class="pill ' + b.review_status + '">' + b.review_status + '</span>';
-  if (b.review_status === 'dismissed' || b.review_status === 'noise')
-    h += '<span class="pill">' + b.review_status + '</span>';
-  h += '</h3>';
-  var meta = [];
-  if (b.last_action_at || b.last_action) meta.push(esc(b.last_action_at || '') + ' ' + esc((b.last_action || '').slice(0, 170)));
-  if (b.sponsor_summary) meta.push('Sponsors: ' + esc(b.sponsor_summary));
-  if (b.agency) meta.push(esc(b.agency));
-  if (b.comments_close_on) meta.push('<span class="' + (b.comments_close_on >= TODAY ? 'deadline' : '') + '">Comments close ' + esc(b.comments_close_on) + '</span>');
-  if (b.next_event_at && b.next_event_at >= TODAY) meta.push('<span class="deadline">Hearing ' + esc(b.next_event_at) + '</span>');
-  if (b.session_name) meta.push(esc(b.session_name));
-  h += '<div class="meta">' + meta.join(' &middot; ') + '</div>';
-  if (b.match_terms) h += '<div class="why">why: ' + esc(b.match_terms.slice(0, 220)) + '</div>';
-  if (extra) h += extra;
-  if (b.notes) h += '<div class="notes">' + esc(b.notes) + (b.reviewed_by ? '<br><i>' + esc(b.reviewed_by) + ', ' + esc((b.reviewed_at || '').slice(0, 10)) + '</i>' : '') + '</div>';
-  h += '<div class="detail" id="detail-' + b.id + '"></div>';
-  el.innerHTML = h;
+function loadData(){
+  $('list').innerHTML = '<div class="empty">Loading</div>';
+  return Promise.all([
+    fetchAll(function(){ return sb.from('leg_bills').select(COLS).order('id'); }),
+    sb.from('leg_bill_events').select('id,bill_id,kind,occurred_at,seen_at,previous_stage,new_stage,new_value,action')
+      .neq('kind', 'new').gte('seen_at', daysAgo(30) + 'T00:00:00').order('seen_at', {ascending:false}).limit(2000),
+    sb.from('leg_runs').select('started_at').eq('kind', 'billscan').order('started_at', {ascending:false}).limit(1)
+  ]).then(function(res){
+    bills = dedupe(res[0]);
+    events = (res[1].data || []);
+    lastRun = res[2].data && res[2].data[0] ? res[2].data[0].started_at : null;
+    render();
+  }).catch(function(e){ $('list').innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; });
+}
 
-  var act = document.createElement('div'); act.className = 'actions';
+// ---------------------------------------------------------------- rows
+
+function row(b, extraRight){
+  var r = el('div', 'row' + (open[b.id] ? ' open' : ''));
+  var flag = '';
+  var nd = nextDate(b);
+  if (nd) flag = '<span class="flag">' + (b.comments_close_on === nd ? 'comments close ' : 'hearing ') + esc(nd) + '</span>';
+  var mark = (b.review_status === 'watch' || b.review_status === 'relevant') ? '<span class="mark ' + b.review_status + '">' + b.review_status + '</span>' : '';
+  r.innerHTML = '<span class="num">' + jurPill(b.jurisdiction) + esc(b.bill_number || '') + '</span>' +
+    '<span class="title">' + esc((b.title || '').slice(0, 110)) + ((b.title || '').length > 110 ? '…' : '') + '</span>' + mark + flag + (extraRight || '') +
+    stagePill(b.status_stage) + '<span class="date">' + esc(b.last_action_at || '') + '</span>';
+  r.onclick = function(){ open[b.id] = !open[b.id]; render(); };
+  return r;
+}
+
+function panel(b){
+  var p = el('div', 'panel');
+  var h = '<div class="full">' + jurPill(b.jurisdiction) + esc(b.bill_number || '') + ' ' + esc(b.title) + '</div>';
+  var meta = [];
+  if (b.last_action_at || b.last_action) meta.push('<b>Last action</b> ' + esc(b.last_action_at || '') + ' ' + esc(b.last_action || ''));
+  if (b.sponsor_summary) meta.push('<b>Sponsors</b> ' + esc(b.sponsor_summary));
+  if (b.agency) meta.push('<b>Agency</b> ' + esc(b.agency));
+  if (b.introduced_at) meta.push('<b>Introduced</b> ' + esc(b.introduced_at));
+  if (b.effective_on) meta.push('<b>Effective</b> ' + esc(b.effective_on));
+  if (b.comments_close_on) meta.push('<b>Comments close</b> ' + esc(b.comments_close_on));
+  if (b.next_event_at && b.next_event_at >= TODAY) meta.push('<b>Hearing</b> ' + esc(b.next_event_at));
+  if (b.session_name) meta.push(esc(b.session_name));
+  meta.push('<a href="' + esc(b.url || '#') + '" target="_blank" rel="noopener">Open at source</a>' +
+    (b.source_url && b.source_url !== b.url ? ' &middot; <a href="' + esc(b.source_url) + '" target="_blank" rel="noopener">Official page</a>' : ''));
+  h += '<div class="meta">' + meta.join('<br>') + '</div>';
+  if (b.match_terms) h += '<div class="why">Why it surfaced: ' + esc(b.match_terms.slice(0, 240)) + '</div>';
+  if (b.notes) h += '<div class="notes">' + esc(b.notes) + (b.reviewed_by ? '<br><i>' + esc(b.reviewed_by) + ', ' + esc((b.reviewed_at || '').slice(0, 10)) + '</i>' : '') + '</div>';
+  h += '<div id="more-' + b.id + '"><span class="empty">Loading summary and history</span></div>';
+  p.innerHTML = h;
+  var act = el('div', 'actions');
   if (b.review_status !== 'watch') act.appendChild(btn('Watch', 'btn btn-amber', function(){ setReview(b, 'watch'); }));
   if (b.review_status !== 'relevant') act.appendChild(btn('Relevant', 'btn btn-green', function(){ setReview(b, 'relevant'); }));
   if (b.review_status !== 'dismissed') act.appendChild(btn('Dismiss', 'btn btn-red', function(){ setReview(b, 'dismissed'); }));
-  if (b.review_status !== 'new') act.appendChild(btn('Reset to new', 'btn', function(){ setReview(b, 'new'); }));
-  act.appendChild(btn('Note', 'btn btn-link', function(){ noteBox(el, b); }));
-  act.appendChild(btn('Details', 'btn btn-link', function(){ toggleDetail(b); }));
-  if (b.source_url && b.source_url !== b.url) act.appendChild(link('Source', b.source_url));
-  el.appendChild(act);
-  return el;
+  if (b.review_status !== 'new') act.appendChild(btn('Clear mark', 'btn', function(){ setReview(b, 'new'); }));
+  act.appendChild(btn(b.notes ? 'Edit note' : 'Add note', 'btn btn-link', function(){ noteBox(p, b); }));
+  p.appendChild(act);
+  p.onclick = function(e){ e.stopPropagation(); };
+  loadMore(b);
+  return p;
 }
 
-function link(t, href){ var a = document.createElement('a'); a.className = 'btn btn-link'; a.textContent = t; a.href = href; a.target = '_blank'; a.rel = 'noopener'; return a; }
-
-function noteBox(el, b){
-  if (el.querySelector('textarea.note')) return;
-  var ta = document.createElement('textarea'); ta.className = 'note'; ta.value = b.notes || ''; ta.placeholder = 'Committee note';
-  var save = btn('Save note', 'btn btn-primary', function(){
-    sb.from('leg_bills').update({notes: ta.value.trim() || null, reviewed_by: user, reviewed_at: new Date().toISOString()})
-      .eq('id', b.id).then(function(r){ if (r.error) alert('Save failed: ' + r.error.message); else load(); });
-  });
-  el.appendChild(ta); el.appendChild(save);
-}
-
-function toggleDetail(b){
-  var d = $('detail-' + b.id);
-  if (d.style.display === 'block'){ d.style.display = 'none'; return; }
-  d.style.display = 'block'; d.innerHTML = '<p>Loading</p>';
-  sb.from('leg_bills').select('description,history,calendar,related,subjects,text_url,current_location,introduced_at,source_url')
-    .eq('id', b.id).single().then(function(r){
-      if (r.error){ d.innerHTML = '<p>' + esc(r.error.message) + '</p>'; return; }
+function loadMore(b){
+  sb.from('leg_bills').select('description,history,calendar,related,subjects,text_url,current_location').eq('id', b.id).single()
+    .then(function(r){
+      var d = $('more-' + b.id); if (!d) return;
+      if (r.error){ d.innerHTML = '<span class="empty">' + esc(r.error.message) + '</span>'; return; }
       var x = r.data, h = '';
-      if (x.description) h += '<p>' + esc(x.description.slice(0, 3000)) + '</p>';
+      if (x.description) h += '<p>' + esc(x.description.slice(0, 4000)) + '</p>';
       var bits = [];
-      if (x.introduced_at) bits.push('Introduced ' + esc(x.introduced_at));
       if (x.current_location) bits.push(esc(x.current_location));
       if (x.subjects && x.subjects.length) bits.push('Subjects: ' + esc(x.subjects.join(', ')));
       if (x.related && x.related.length) bits.push('Related: ' + esc(x.related.map(function(r){ return r.type + ' ' + r.bill_number; }).join(', ')));
       if (x.text_url) bits.push('<a href="' + esc(x.text_url) + '" target="_blank" rel="noopener">Bill text</a>');
-      if (bits.length) h += '<p>' + bits.join(' &middot; ') + '</p>';
+      if (bits.length) h += '<div class="meta">' + bits.join(' &middot; ') + '</div>';
       if (x.calendar && x.calendar.length){
         var fut = x.calendar.filter(function(c){ return c.date >= TODAY; });
-        if (fut.length) h += '<p><b>Upcoming:</b> ' + fut.map(function(c){ return esc(c.date + ' ' + (c.time || '') + ' ' + (c.description || '')); }).join('; ') + '</p>';
+        if (fut.length) h += '<div class="meta"><b>Upcoming:</b> ' + fut.map(function(c){ return esc(c.date + ' ' + (c.time || '') + ' ' + (c.description || '')); }).join('; ') + '</div>';
       }
       if (x.history && x.history.length){
-        h += '<div class="section">History</div>';
+        h += '<div class="meta" style="margin-top:6px"><b>History</b></div>';
         x.history.slice().reverse().slice(0, 40).forEach(function(s){
           h += '<div class="hist"><b>' + esc(s.date || '') + '</b> ' + esc(s.chamber || '') + ' ' + esc(s.action || '') + (s.vote ? ' <i>' + esc(s.vote) + '</i>' : '') + '</div>';
         });
       }
-      d.innerHTML = h || '<p>No detail stored yet.</p>';
+      d.innerHTML = h || '<span class="empty">No detail stored yet.</span>';
     });
+}
+
+function noteBox(p, b){
+  if (p.querySelector('textarea.note')) return;
+  var ta = el('textarea', 'note'); ta.value = b.notes || ''; ta.placeholder = 'Committee note';
+  ta.onclick = function(e){ e.stopPropagation(); };
+  var save = btn('Save note', 'btn btn-primary', function(){
+    var body = {notes: ta.value.trim() || null, reviewed_by: user, reviewed_at: new Date().toISOString()};
+    sb.from('leg_bills').update(body).eq('id', b.id).then(function(r){
+      if (r.error) alert('Save failed: ' + r.error.message);
+      else { b.notes = body.notes; b.reviewed_by = user; b.reviewed_at = body.reviewed_at; render(); }
+    });
+  });
+  p.appendChild(ta); p.appendChild(save);
 }
 
 function setReview(b, status){
-  sb.from('leg_bills').update({review_status: status, reviewed_by: user, reviewed_at: new Date().toISOString()})
-    .eq('id', b.id).then(function(r){
-      if (r.error) alert('Update failed: ' + r.error.message);
-      else load();
-    });
+  var body = {review_status: status, reviewed_by: user, reviewed_at: new Date().toISOString()};
+  sb.from('leg_bills').update(body).eq('id', b.id).then(function(r){
+    if (r.error) alert('Update failed: ' + r.error.message);
+    else { b.review_status = status; b.reviewed_by = user; b.reviewed_at = body.reviewed_at; render(); }
+  });
 }
 
-function renderList(rows, emptyText, grouped){
-  var list = $('list'); list.innerHTML = '';
-  rows = dedupe(rows).filter(passesFilters);
-  if (!rows.length){ list.innerHTML = '<div class="empty">' + esc(emptyText) + '</div>'; return; }
-  if (grouped){
-    rows.sort(function(a, b){ return jurOrder(a.jurisdiction) - jurOrder(b.jurisdiction) || (a.jurisdiction > b.jurisdiction ? 1 : a.jurisdiction < b.jurisdiction ? -1 : 0) || ((b.last_action_at || '') > (a.last_action_at || '') ? 1 : -1); });
-    var cur = null;
-    rows.forEach(function(b){
-      if (b.jurisdiction !== cur){ cur = b.jurisdiction; var s = document.createElement('div'); s.className = 'section'; s.textContent = cur === 'US' ? 'Federal' : cur === 'OR' ? 'Oregon' : cur; list.appendChild(s); }
-      list.appendChild(card(b));
-    });
-  } else {
-    rows.forEach(function(b){ list.appendChild(card(b)); });
+// ---------------------------------------------------------------- sections
+
+function section(title, rows, opts){
+  opts = opts || {};
+  var wrap = document.createDocumentFragment();
+  var h = el('h2', null, esc(title) + ' <span class="n">' + rows.length + '</span>');
+  wrap.appendChild(h);
+  if (!rows.length){ wrap.appendChild(el('div', 'empty', esc(opts.empty || 'Nothing here.'))); return wrap; }
+  var g = el('div', 'group');
+  rows.forEach(function(b){
+    g.appendChild(row(b, opts.right ? opts.right(b) : ''));
+    if (open[b.id]) g.appendChild(panel(b));
+  });
+  wrap.appendChild(g);
+  return wrap;
+}
+
+function byJurisdiction(rows, list, opts){
+  // Oregon first, Federal second, every other state collapsed into one group
+  var or = rows.filter(function(b){ return b.jurisdiction === 'OR'; });
+  var us = rows.filter(function(b){ return b.jurisdiction === 'US'; });
+  var st = rows.filter(function(b){ return b.jurisdiction !== 'OR' && b.jurisdiction !== 'US'; });
+  list.appendChild(section('Oregon', or, {empty: opts.orEmpty || 'Nothing pending in Oregon.'}));
+  list.appendChild(section('Federal', us, {empty: 'Nothing federal.'}));
+  var key = view + ':' + (opts.tag || '');
+  var expanded = showStates[key] || !!query;
+  var h = el('h2', null, 'Other states <span class="n">' + st.length + '</span>' +
+    (st.length ? '<span class="toggle">' + (expanded ? 'hide' : 'show') + '</span>' : ''));
+  var t = h.querySelector('.toggle');
+  if (t) t.onclick = function(){ showStates[key] = !expanded; render(); };
+  list.appendChild(h);
+  if (!st.length) list.appendChild(el('div', 'empty', 'No other-state items.'));
+  else if (expanded){
+    st.sort(function(a, b){ return a.jurisdiction < b.jurisdiction ? -1 : a.jurisdiction > b.jurisdiction ? 1 : (RANK[b.status_stage] || 0) - (RANK[a.status_stage] || 0); });
+    var g = el('div', 'group');
+    st.forEach(function(b){ g.appendChild(row(b)); if (open[b.id]) g.appendChild(panel(b)); });
+    list.appendChild(g);
   }
 }
 
-function loadLane(t){
-  var q = function(){ var s = sb.from('leg_bills').select(COLS).in('review_status', t.status); if (t.lane) s = s.eq('lane', t.lane); else s = s.neq('lane', 'other'); return s.order('last_action_at', {ascending:false, nullsFirst:false}); };
-  fetchAll(q).then(function(rows){ renderList(rows, 'Nothing here.', true); })
-    .catch(function(e){ $('list').innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; });
-}
+function activeSort(a, b){ return (RANK[b.status_stage] || 0) - (RANK[a.status_stage] || 0) || ((b.last_action_at || '') > (a.last_action_at || '') ? 1 : -1); }
+function dateSort(a, b){ return ((b.last_action_at || '') > (a.last_action_at || '')) ? 1 : -1; }
 
-function loadDeadlines(){
-  var q = function(){ return sb.from('leg_bills').select(COLS).in('review_status', LIVE).neq('lane', 'other')
-    .or('comments_close_on.gte.' + TODAY + ',next_event_at.gte.' + TODAY); };
-  fetchAll(q).then(function(rows){
-    rows.sort(function(a, b){ var da = [a.comments_close_on, a.next_event_at].filter(function(d){ return d && d >= TODAY; }).sort()[0]; var db = [b.comments_close_on, b.next_event_at].filter(function(d){ return d && d >= TODAY; }).sort()[0]; return da > db ? 1 : -1; });
-    renderList(rows, 'No comment deadlines or hearings coming up.', false);
-  }).catch(function(e){ $('list').innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; });
-}
-
-function loadMovement(){
-  var since = new Date(Date.now() - 21 * 86400000).toISOString();
-  sb.from('leg_bill_events').select('id,bill_id,kind,occurred_at,seen_at,previous_stage,new_stage,previous_value,new_value,action')
-    .neq('kind', 'new').gte('seen_at', since).order('seen_at', {ascending:false}).limit(1000)
-    .then(function(r){
-      if (r.error){ $('list').innerHTML = '<div class="empty">' + esc(r.error.message) + '</div>'; return; }
-      var byBill = {};
-      r.data.forEach(function(e){ (byBill[e.bill_id] = byBill[e.bill_id] || []).push(e); });
-      var ids = Object.keys(byBill);
-      if (!ids.length){ $('list').innerHTML = '<div class="empty">No status changes in the last three weeks. New bills appear in their lane tabs.</div>'; return; }
-      fetchAll(function(){ return sb.from('leg_bills').select(COLS).in('id', ids).in('review_status', LIVE).neq('lane', 'other'); })
-        .then(function(rows){
-          var list = $('list'); list.innerHTML = '';
-          rows = dedupe(rows).filter(passesFilters);
-          if (!rows.length){ list.innerHTML = '<div class="empty">No movement on tracked bills.</div>'; return; }
-          rows.sort(function(a, b){ return jurOrder(a.jurisdiction) - jurOrder(b.jurisdiction) || ((b.last_changed_at || '') > (a.last_changed_at || '') ? 1 : -1); });
-          rows.forEach(function(b){
-            var evs = byBill[b.id].slice().sort(function(x, y){ return (x.seen_at > y.seen_at) ? 1 : -1; });
-            var h = evs.map(function(e){
-              var txt = e.kind === 'stage' ? 'stage: ' + (STAGE_LABEL[e.previous_stage] || e.previous_stage || '?') + ' to ' + (STAGE_LABEL[e.new_stage] || e.new_stage)
-                : e.kind === 'action' ? 'action: ' + (e.new_value || '')
-                : e.kind === 'calendar' ? 'hearing: ' + (e.new_value || '')
-                : e.kind + ': ' + (e.new_value || '');
-              return '<div class="event"><b>' + esc(e.occurred_at || e.seen_at.slice(0, 10)) + '</b> ' + esc(txt.slice(0, 260)) + '</div>';
-            }).join('');
-            list.appendChild(card(b, h));
-          });
-        });
+function renderNow(list){
+  var live = bills.filter(function(b){ return isTopic(b) && isLive(b) && passes(b); });
+  list.appendChild(el('div', 'lead', 'What needs eyes now. Everything else is under Active, Enacted and Rulemaking.'));
+  var due = live.filter(function(b){ var d = nextDate(b); return d && d <= daysAgo(-60); }).sort(function(a, b){ return nextDate(a) > nextDate(b) ? 1 : -1; });
+  list.appendChild(section('Comment deadlines and hearings, next 60 days', due, {empty: 'Nothing on the calendar.'}));
+  var close = live.filter(function(b){ return b.status_stage === 'passed_both' || b.status_stage === 'passed_chamber'; }).sort(activeSort);
+  list.appendChild(section('Close to becoming law', close, {empty: 'No bill past a chamber vote right now.'}));
+  var byBill = {};
+  events.forEach(function(e){ (byBill[e.bill_id] = byBill[e.bill_id] || []).push(e); });
+  var moved = live.filter(function(b){ return byBill[b.id] && b.status_stage !== 'dead'; }).sort(function(a, b){ return (b.last_changed_at || '') > (a.last_changed_at || '') ? 1 : -1; });
+  var mh = el('h2', null, 'Moved in the last 30 days <span class="n">' + moved.length + '</span>');
+  list.appendChild(mh);
+  if (!moved.length) list.appendChild(el('div', 'empty', 'No status changes since the last scans.'));
+  else {
+    var g = el('div', 'group');
+    moved.forEach(function(b){
+      g.appendChild(row(b));
+      var evs = byBill[b.id].slice().sort(function(x, y){ return x.seen_at > y.seen_at ? 1 : -1; });
+      var ev = el('div', 'panel');
+      ev.innerHTML = evs.map(function(e){
+        var txt = e.kind === 'stage' ? 'stage: ' + (STAGE_LABEL[e.previous_stage] || e.previous_stage || '?') + ' to ' + (STAGE_LABEL[e.new_stage] || e.new_stage)
+          : e.kind === 'action' ? 'action: ' + (e.new_value || '') : e.kind === 'calendar' ? 'hearing: ' + (e.new_value || '') : e.kind + ': ' + (e.new_value || '');
+        return '<div class="event"><b>' + esc(e.occurred_at || e.seen_at.slice(0, 10)) + '</b> ' + esc(txt.slice(0, 260)) + '</div>';
+      }).join('');
+      ev.onclick = function(e){ e.stopPropagation(); };
+      g.appendChild(ev);
+      if (open[b.id]) g.appendChild(panel(b));
     });
+    list.appendChild(g);
+  }
+  var fresh = live.filter(function(b){ return isActive(b) && b.introduced_at && b.introduced_at >= daysAgo(60); }).sort(dateSort);
+  list.appendChild(section('Introduced in the last 60 days', fresh, {empty: 'No new introductions.'}));
 }
 
-function load(){
-  var t = TABS.filter(function(x){ return x.key === current; })[0];
-  $('toolbar').style.display = 'flex';
-  if (t.key === 'movement') loadMovement();
-  else if (t.key === 'deadlines') loadDeadlines();
-  else loadLane(t);
-  updateCounts();
+function renderActive(list){
+  var rows = bills.filter(function(b){ return isTopic(b) && isLive(b) && isActive(b) && passes(b); }).sort(activeSort);
+  list.appendChild(el('div', 'lead', 'Living bills only, closest to law first. Dead bills sit in the Archive.'));
+  byJurisdiction(rows, list, {tag: 'active', orEmpty: 'Nothing pending in Oregon. The 2027 session convenes in January and presession filings appear here as they post.'});
 }
 
-function updateCounts(){
-  var lanes = ['ai_music','ticketing','music_policy','ai_general'];
-  var jobs = lanes.map(function(l){ return sb.from('leg_bills').select('id', {count:'exact', head:true}).eq('lane', l).in('review_status', LIVE).then(function(r){ return ['lane:' + l, r.count || 0]; }); });
-  jobs.push(sb.from('leg_bills').select('id', {count:'exact', head:true}).in('review_status', ['watch','relevant']).then(function(r){ return ['watch', r.count || 0]; }));
-  jobs.push(sb.from('leg_bills').select('id', {count:'exact', head:true}).eq('review_status', 'dismissed').then(function(r){ return ['dismissed', r.count || 0]; }));
-  jobs.push(sb.from('leg_bills').select('id', {count:'exact', head:true}).eq('review_status', 'noise').then(function(r){ return ['noise', r.count || 0]; }));
-  jobs.push(sb.from('leg_bills').select('id', {count:'exact', head:true}).then(function(r){ return ['total', r.count || 0]; }));
-  jobs.push(sb.from('leg_runs').select('started_at,sources_run,queries_used').eq('kind', 'billscan').order('started_at', {ascending:false}).limit(1).then(function(r){ return ['run', (r.data && r.data[0]) || null]; }));
-  Promise.all(jobs).then(function(pairs){
-    var c = {}; pairs.forEach(function(p){ c[p[0]] = p[1]; });
-    TABS.forEach(function(t){
-      var n = t.lane ? c['lane:' + t.lane] : (t.key === 'watch' ? c.watch : t.key === 'dismissed' ? c.dismissed : t.key === 'noise' ? c.noise : null);
-      var el = $('tab-' + t.key);
-      if (el) el.innerHTML = esc(t.label) + (n === null || n === undefined ? '' : '<span class="count">' + n + '</span>');
-    });
-    var run = c.run;
-    $('foot').innerHTML = (c.total || 0) + ' items tracked. ' + (run ? 'Last scan ' + esc(run.started_at.slice(0, 16).replace('T', ' ')) + ' UTC.' : 'No scan yet.') +
-      '<br>Relevance is keyword rules plus committee review, no AI scoring. Bill data from <a href="https://legiscan.com" target="_blank" rel="noopener">LegiScan</a> (CC BY 4.0), ' +
-      'the <a href="https://olis.oregonlegislature.gov" target="_blank" rel="noopener">Oregon Legislature (OLIS)</a>, the ' +
-      '<a href="https://www.federalregister.gov" target="_blank" rel="noopener">Federal Register</a> and <a href="https://www.congress.gov" target="_blank" rel="noopener">Congress.gov</a>. ' +
-      'Private committee tool for Music Oregon, not for redistribution.';
+function renderEnacted(list){
+  var rows = bills.filter(function(b){ return isTopic(b) && isLive(b) && (b.status_stage === 'enacted' || b.status_stage === 'final') && passes(b); })
+    .sort(function(a, b){ return ((b.effective_on || b.last_action_at || '') > (a.effective_on || a.last_action_at || '')) ? 1 : -1; });
+  list.appendChild(el('div', 'lead', 'Signed into law, or final agency rules. Newest first.'));
+  byJurisdiction(rows, list, {tag: 'enacted', orEmpty: 'No Oregon law on these topics yet.'});
+}
+
+function renderRules(list){
+  var rows = bills.filter(function(b){ return b.source === 'federal_register' && isTopic(b) && isLive(b) && passes(b); });
+  list.appendChild(el('div', 'lead', 'Federal agency actions on these topics: Copyright Office, FTC, Copyright Royalty Board. Comment windows are where the committee can act.'));
+  var openC = rows.filter(function(b){ return b.comments_close_on && b.comments_close_on >= TODAY; }).sort(function(a, b){ return a.comments_close_on > b.comments_close_on ? 1 : -1; });
+  list.appendChild(section('Open for comment', openC, {empty: 'No open comment windows.'}));
+  var prop = rows.filter(function(b){ return b.status_stage === 'proposed' && !(b.comments_close_on && b.comments_close_on >= TODAY); }).sort(dateSort);
+  list.appendChild(section('Proposed rules', prop, {empty: 'None.'}));
+  var notes = rows.filter(function(b){ return b.status_stage === 'notice' && !(b.comments_close_on && b.comments_close_on >= TODAY); }).sort(dateSort);
+  list.appendChild(section('Notices and inquiries', notes, {empty: 'None.'}));
+  var fin = rows.filter(function(b){ return b.status_stage === 'final'; }).sort(dateSort);
+  list.appendChild(section('Final rules', fin, {empty: 'None.'}));
+}
+
+function renderWatch(list){
+  var rows = bills.filter(function(b){ return (b.review_status === 'watch' || b.review_status === 'relevant') && passes(b); }).sort(activeSort);
+  list.appendChild(el('div', 'lead', 'Everything a member marked Watch or Relevant, any topic, any stage.'));
+  list.appendChild(section('Relevant', rows.filter(function(b){ return b.review_status === 'relevant'; }), {empty: 'Nothing marked Relevant yet.'}));
+  list.appendChild(section('Watching', rows.filter(function(b){ return b.review_status === 'watch'; }), {empty: 'Nothing marked Watch yet.'}));
+}
+
+function renderArchive(list){
+  var bar = el('div', 'toolbar'); bar.style.padding = '8px 0 0';
+  ARCHIVE_SETS.forEach(function(s){
+    var c = el('span', 'chip' + (s.key === archiveSet ? ' active' : ''), esc(s.label) + '<span class="count">' + bills.filter(s.test).length + '</span>');
+    c.onclick = function(){ archiveSet = s.key; render(); };
+    bar.appendChild(c);
   });
+  list.appendChild(bar);
+  var set = ARCHIVE_SETS.filter(function(s){ return s.key === archiveSet; })[0];
+  var rows = bills.filter(function(b){ return set.test(b) && passes(b); }).sort(dateSort);
+  var lead = {dead: 'Bills whose session ended without passage. Kept for reference; many come back next session.',
+    vetoed: 'Vetoed bills.', dismissed: 'Set aside by a member. Open one and use Clear mark to bring it back.',
+    noise: 'Hidden by a keyword rule. The rule and word that fired are in the row detail. If one is wrong, Clear mark and tell Jeffrey.',
+    ai_general: 'AI bills with no music or performer angle, kept for reference.',
+    music_policy: 'Music-industry actions without an AI angle: rate proceedings, licensing, the MLC.'}[archiveSet];
+  list.appendChild(el('div', 'lead', esc(lead)));
+  list.appendChild(section(set.label, rows, {empty: 'Empty.'}));
+}
+
+function render(){
+  var list = $('list'); list.innerHTML = '';
+  if (view === 'now') renderNow(list);
+  else if (view === 'active') renderActive(list);
+  else if (view === 'enacted') renderEnacted(list);
+  else if (view === 'rules') renderRules(list);
+  else if (view === 'watch') renderWatch(list);
+  else renderArchive(list);
+  drawTabs();
+  $('hint').textContent = topic === 'all' ? '' : (topic === 'ai_music' ? 'Showing AI + Music only' : 'Showing Ticketing only');
+  var active = bills.filter(function(b){ return isTopic(b) && isLive(b) && isActive(b); }).length;
+  $('foot').innerHTML = bills.length + ' items in the database, ' + active + ' active bills on the two topics. ' +
+    (lastRun ? 'Last scan ' + esc(lastRun.slice(0, 16).replace('T', ' ')) + ' UTC. ' : '') +
+    '<br>Relevance is keyword rules plus committee review, no AI scoring. Bill data from <a href="https://legiscan.com" target="_blank" rel="noopener">LegiScan</a> (CC BY 4.0), ' +
+    'the <a href="https://olis.oregonlegislature.gov" target="_blank" rel="noopener">Oregon Legislature (OLIS)</a>, the ' +
+    '<a href="https://www.federalregister.gov" target="_blank" rel="noopener">Federal Register</a> and <a href="https://www.congress.gov" target="_blank" rel="noopener">Congress.gov</a>. ' +
+    'Private committee tool for Music Oregon, not for redistribution.';
+}
+
+function counts(){
+  var live = bills.filter(function(b){ return isTopic(b) && isLive(b); });
+  return {
+    now: live.filter(function(b){ var d = nextDate(b); return (d && d <= daysAgo(-60)) || b.status_stage === 'passed_both' || b.status_stage === 'passed_chamber'; }).length,
+    active: live.filter(isActive).length,
+    enacted: live.filter(function(b){ return b.status_stage === 'enacted' || b.status_stage === 'final'; }).length,
+    rules: live.filter(function(b){ return b.source === 'federal_register'; }).length,
+    watch: bills.filter(function(b){ return b.review_status === 'watch' || b.review_status === 'relevant'; }).length,
+    archive: null
+  };
 }
 
 function drawTabs(){
   var n = $('tabs'); n.innerHTML = '';
-  TABS.forEach(function(t){
+  var c = counts();
+  VIEWS.forEach(function(v){
     var b = document.createElement('button');
-    b.className = 'tab' + (t.key === current ? ' active' : ''); b.id = 'tab-' + t.key;
-    b.textContent = t.label;
-    b.onclick = function(){ current = t.key; drawTabs(); load(); };
+    b.className = 'tab' + (v.key === view ? ' active' : '');
+    b.innerHTML = esc(v.label) + (c[v.key] == null ? '' : '<span class="count">' + c[v.key] + '</span>');
+    b.onclick = function(){ view = v.key; render(); window.scrollTo(0, 0); };
     n.appendChild(b);
   });
 }
@@ -372,7 +477,7 @@ function show(session){
   user = loggedIn ? (session.user.email || session.user.id) : null;
   $('loginScreen').style.display = loggedIn ? 'none' : 'flex';
   $('app').style.display = loggedIn ? 'block' : 'none';
-  if (loggedIn){ drawTabs(); load(); }
+  if (loggedIn) loadData();
 }
 
 $('loginBtn').onclick = function(){
@@ -386,12 +491,12 @@ $('loginBtn').onclick = function(){
 $('pass').addEventListener('keydown', function(e){ if (e.key === 'Enter') $('loginBtn').click(); });
 $('email').addEventListener('keydown', function(e){ if (e.key === 'Enter') $('pass').focus(); });
 $('outBtn').onclick = function(){ sb.auth.signOut().then(function(){ show(null); }); };
-$('refreshBtn').onclick = load;
-$('search').addEventListener('input', function(e){ query = e.target.value.trim().toLowerCase(); load(); });
-Array.prototype.forEach.call(document.querySelectorAll('.chip'), function(ch){
+$('refreshBtn').onclick = loadData;
+$('search').addEventListener('input', function(e){ query = e.target.value.trim().toLowerCase(); render(); });
+Array.prototype.forEach.call(document.querySelectorAll('.toolbar .chip[data-topic]'), function(ch){
   ch.onclick = function(){
-    Array.prototype.forEach.call(document.querySelectorAll('.chip'), function(x){ x.classList.remove('active'); });
-    ch.classList.add('active'); jur = ch.dataset.jur; load();
+    Array.prototype.forEach.call(document.querySelectorAll('.toolbar .chip[data-topic]'), function(x){ x.classList.remove('active'); });
+    ch.classList.add('active'); topic = ch.dataset.topic; render();
   };
 });
 
