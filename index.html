@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Oregon Sound Circuit, Policy Tracker</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>
+:root{--text:#1a1a1a;--text-secondary:#555;--text-tertiary:#888;--accent:#1f5f8b;
+--bg:#f7f7f4;--rule:#e2e2de;--green:#1f7a3f;--amber:#a8720d;--red:#a33;--purple:#553c9a}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Inter',sans-serif;
+background:var(--bg);color:var(--text);font-size:15px;line-height:1.5}
+.login{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.login-box{background:#fff;border:1px solid var(--rule);border-radius:10px;padding:36px;max-width:400px;width:100%}
+.login-box h1{font-size:19px;margin-bottom:2px}
+.login-box .sub{font-size:13px;color:var(--text-tertiary);margin-bottom:20px}
+.login-box input{width:100%;padding:10px 12px;border:1px solid var(--rule);border-radius:6px;
+font:inherit;font-size:14px;margin-bottom:10px;background:var(--bg)}
+.login-box input:focus{outline:none;border-color:var(--accent)}
+.err{color:var(--red);font-size:12.5px;margin-bottom:10px;display:none}
+.btn{display:inline-block;border:none;border-radius:6px;padding:7px 13px;font:inherit;
+font-size:13px;font-weight:600;cursor:pointer;background:#eee;color:var(--text)}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-green{background:var(--green);color:#fff}
+.btn-amber{background:#fff;color:var(--amber);border:1px solid var(--amber)}
+.btn-red{background:#fff;color:var(--red);border:1px solid var(--red)}
+.btn-link{background:none;color:var(--accent);padding:4px 6px;font-weight:500}
+.btn:disabled{opacity:.5;cursor:default}
+header{display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid var(--rule);
+background:#fff;position:sticky;top:0;z-index:5;flex-wrap:wrap}
+header h1{font-size:15px;margin-right:auto;white-space:nowrap}
+header h1 span{color:var(--text-tertiary);font-weight:400}
+.tabs{display:flex;gap:4px;flex-wrap:wrap}
+.tab{padding:5px 11px;border-radius:20px;font-size:12.5px;cursor:pointer;border:1px solid var(--rule);background:#fff}
+.tab.active{background:var(--text);color:#fff;border-color:var(--text)}
+.count{font-size:11px;color:inherit;opacity:.65;margin-left:4px}
+.toolbar{max-width:940px;margin:0 auto;padding:14px 20px 0;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.toolbar input{padding:7px 10px;border:1px solid var(--rule);border-radius:6px;font:inherit;font-size:13px;min-width:220px;background:#fff}
+.chip{padding:4px 10px;border-radius:14px;font-size:12px;cursor:pointer;border:1px solid var(--rule);background:#fff;color:var(--text-secondary)}
+.chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+main{max-width:940px;margin:0 auto;padding:14px 20px 20px}
+.card{background:#fff;border:1px solid var(--rule);border-radius:10px;padding:14px 16px;margin-bottom:10px}
+.card h3{font-size:14.5px;margin-bottom:3px;font-weight:600;line-height:1.35}
+.card h3 a{color:var(--text);text-decoration:none}
+.card h3 a:hover{color:var(--accent)}
+.meta{font-size:12.5px;color:var(--text-secondary);margin-bottom:6px}
+.why{font-size:11.5px;color:var(--text-tertiary);margin-bottom:6px}
+.jur{display:inline-block;font-size:11px;font-weight:700;padding:1px 6px;border-radius:4px;background:#2b6cb0;color:#fff;margin-right:6px;vertical-align:1px}
+.jur.OR{background:var(--green)}.jur.US{background:var(--purple)}
+.stage{display:inline-block;font-size:11px;padding:1px 7px;border-radius:10px;background:#edf2f7;color:#334;margin-left:6px;vertical-align:1px;font-weight:500}
+.stage.good{background:#def7e6;color:#0a7d38}.stage.warm{background:#fff3d6;color:#8a5a00}
+.stage.bad{background:#fde2e2;color:#a11}.stage.dim{background:#eee;color:#888}
+.pill{font-size:11px;padding:1px 7px;border-radius:10px;background:var(--bg);border:1px solid var(--rule);color:var(--text-secondary);margin-left:4px}
+.pill.watch{background:#fff3d6;border-color:#f0d9a0;color:#8a5a00}
+.pill.relevant{background:#def7e6;border-color:#b7e4c4;color:#0a7d38}
+.deadline{color:var(--red);font-weight:600}
+.notes{font-size:12.5px;color:var(--text-secondary);background:var(--bg);border-radius:6px;padding:8px 10px;white-space:pre-wrap;margin:6px 0}
+.detail{display:none;margin-top:8px;border-top:1px dashed var(--rule);padding-top:8px}
+.detail p{font-size:13px;color:var(--text-secondary);margin-bottom:8px;white-space:pre-wrap}
+.hist{font-size:12px;color:var(--text-secondary);margin:2px 0 2px 8px}
+.hist b{color:var(--text)}
+.actions{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:6px}
+textarea.note{width:100%;min-height:54px;padding:8px;border:1px solid var(--rule);border-radius:6px;font:inherit;font-size:13px;margin-top:6px;background:#fff}
+.event{font-size:13px;margin:2px 0 2px 10px;color:var(--text-secondary)}
+.event b{color:var(--text)}
+.empty{color:var(--text-tertiary);text-align:center;padding:40px 0}
+.section{font-size:13px;font-weight:700;color:var(--text-secondary);margin:18px 0 8px;text-transform:uppercase;letter-spacing:.04em}
+footer{max-width:940px;margin:0 auto;padding:8px 20px 40px;font-size:12px;color:var(--text-tertiary);line-height:1.6}
+footer a{color:var(--text-secondary)}
+</style>
+</head>
+<body>
+
+<div id="loginScreen" class="login">
+  <div class="login-box">
+    <h1>Oregon Sound Circuit</h1>
+    <div class="sub">AI Policy Committee tracker. Members only.</div>
+    <div id="loginErr" class="err">Sign-in failed</div>
+    <input type="email" id="email" placeholder="Email" autocomplete="username">
+    <input type="password" id="pass" placeholder="Password" autocomplete="current-password">
+    <button id="loginBtn" class="btn btn-primary" style="width:100%">Sign in</button>
+  </div>
+</div>
+
+<div id="app" style="display:none">
+  <header>
+    <h1>Oregon Sound Circuit <span>Policy Tracker</span></h1>
+    <nav class="tabs" id="tabs"></nav>
+    <button class="btn" id="refreshBtn" title="Reload">&#8635;</button>
+    <button class="btn" id="outBtn">Sign out</button>
+  </header>
+  <div class="toolbar" id="toolbar">
+    <input type="search" id="search" placeholder="Filter by title, number, sponsor">
+    <span class="chip active" data-jur="all">All</span>
+    <span class="chip" data-jur="US">Federal</span>
+    <span class="chip" data-jur="OR">Oregon</span>
+    <span class="chip" data-jur="states">Other states</span>
+  </div>
+  <main id="list"></main>
+  <footer id="foot"></footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+// Publishable key only. Every read and write is gated by Supabase Auth plus
+// row level security on the leg_ tables; without a session the API returns nothing.
+var SB_URL = 'https://ybfaykwwnirjwabmgsqu.supabase.co';
+var SB_KEY = 'sb_publishable__doHKn0KYVVPUnYqVdchnw_TBUq5eYy';
+var sb = window.supabase.createClient(SB_URL, SB_KEY);
+var $ = function(id){ return document.getElementById(id); };
+var TODAY = new Date().toISOString().slice(0, 10);
+var LIVE = ['new', 'watch', 'relevant'];
+var COLS = 'id,source,external_id,kind,jurisdiction,session_name,bill_number,bill_key,title,url,source_url,agency,' +
+  'sponsor_summary,last_action_at,last_action,next_event_at,comments_close_on,effective_on,status_stage,lane,' +
+  'match_terms,review_status,reviewed_by,reviewed_at,notes,first_seen,last_changed_at,detail_fetched_at';
+
+var TABS = [
+  {key:'movement',  label:'Movement'},
+  {key:'deadlines', label:'Deadlines'},
+  {key:'ai_music',  label:'AI + Music', lane:'ai_music', status:LIVE},
+  {key:'ticketing', label:'Ticketing',  lane:'ticketing', status:LIVE},
+  {key:'music_policy', label:'Music policy', lane:'music_policy', status:LIVE},
+  {key:'ai_general', label:'AI general', lane:'ai_general', status:LIVE},
+  {key:'watch',     label:'Watchlist', status:['watch','relevant']},
+  {key:'dismissed', label:'Dismissed', status:['dismissed']},
+  {key:'noise',     label:'Noise', status:['noise']}
+];
+var STAGE_LABEL = {prefiled:'Prefiled', introduced:'Introduced', committee:'In committee', floor:'On the floor',
+  passed_chamber:'Passed one chamber', passed_both:'Passed both chambers', enacted:'Enacted', vetoed:'Vetoed',
+  dead:'Dead', proposed:'Proposed rule', final:'Final rule', notice:'Notice', unknown:'Detail pending'};
+var STAGE_CLASS = {enacted:'good', passed_both:'good', final:'good', passed_chamber:'warm', floor:'warm',
+  proposed:'warm', vetoed:'bad', dead:'dim'};
+var current = 'movement', jur = 'all', query = '', user = null, cache = {};
+
+function esc(s){ var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
+function btn(t, cls, fn){ var b = document.createElement('button'); b.className = cls; b.textContent = t; b.onclick = fn; return b; }
+function jurPill(j){ return '<span class="jur ' + esc(j) + '">' + esc(j) + '</span>'; }
+function stagePill(s){ return '<span class="stage ' + (STAGE_CLASS[s] || '') + '">' + esc(STAGE_LABEL[s] || s || 'Detail pending') + '</span>'; }
+function jurOrder(j){ return j === 'US' ? 0 : j === 'OR' ? 1 : 2; }
+
+function passesFilters(b){
+  if (jur === 'US' && b.jurisdiction !== 'US') return false;
+  if (jur === 'OR' && b.jurisdiction !== 'OR') return false;
+  if (jur === 'states' && (b.jurisdiction === 'US' || b.jurisdiction === 'OR')) return false;
+  if (query){
+    var hay = ((b.title || '') + ' ' + (b.bill_number || '') + ' ' + (b.sponsor_summary || '') + ' ' + (b.agency || '')).toLowerCase();
+    if (hay.indexOf(query) < 0) return false;
+  }
+  return true;
+}
+
+// Oregon bills arrive from both OLIS and LegiScan; show the OLIS copy only.
+function dedupe(rows){
+  var seen = {}, out = [];
+  rows.forEach(function(b){ if (b.source === 'olis' && b.bill_key) seen[b.bill_key] = true; });
+  rows.forEach(function(b){
+    if (b.source === 'legiscan' && b.bill_key && seen[b.bill_key]) return;
+    out.push(b);
+  });
+  return out;
+}
+
+// PostgREST caps a select at 1000 rows, so page through explicitly.
+function fetchAll(build){
+  var out = [];
+  function page(from){
+    return build().range(from, from + 999).then(function(r){
+      if (r.error) throw r.error;
+      out = out.concat(r.data || []);
+      return (r.data && r.data.length === 1000) ? page(from + 1000) : out;
+    });
+  }
+  return page(0);
+}
+
+function card(b, extra){
+  var el = document.createElement('div'); el.className = 'card'; el.dataset.id = b.id;
+  var h = '<h3>' + jurPill(b.jurisdiction) + '<a href="' + esc(b.url || '#') + '" target="_blank" rel="noopener">' +
+    esc(b.bill_number || '') + ' ' + esc(b.title) + '</a>' + stagePill(b.status_stage);
+  if (b.review_status === 'watch' || b.review_status === 'relevant')
+    h += '<span class="pill ' + b.review_status + '">' + b.review_status + '</span>';
+  if (b.review_status === 'dismissed' || b.review_status === 'noise')
+    h += '<span class="pill">' + b.review_status + '</span>';
+  h += '</h3>';
+  var meta = [];
+  if (b.last_action_at || b.last_action) meta.push(esc(b.last_action_at || '') + ' ' + esc((b.last_action || '').slice(0, 170)));
+  if (b.sponsor_summary) meta.push('Sponsors: ' + esc(b.sponsor_summary));
+  if (b.agency) meta.push(esc(b.agency));
+  if (b.comments_close_on) meta.push('<span class="' + (b.comments_close_on >= TODAY ? 'deadline' : '') + '">Comments close ' + esc(b.comments_close_on) + '</span>');
+  if (b.next_event_at && b.next_event_at >= TODAY) meta.push('<span class="deadline">Hearing ' + esc(b.next_event_at) + '</span>');
+  if (b.session_name) meta.push(esc(b.session_name));
+  h += '<div class="meta">' + meta.join(' &middot; ') + '</div>';
+  if (b.match_terms) h += '<div class="why">why: ' + esc(b.match_terms.slice(0, 220)) + '</div>';
+  if (extra) h += extra;
+  if (b.notes) h += '<div class="notes">' + esc(b.notes) + (b.reviewed_by ? '<br><i>' + esc(b.reviewed_by) + ', ' + esc((b.reviewed_at || '').slice(0, 10)) + '</i>' : '') + '</div>';
+  h += '<div class="detail" id="detail-' + b.id + '"></div>';
+  el.innerHTML = h;
+
+  var act = document.createElement('div'); act.className = 'actions';
+  if (b.review_status !== 'watch') act.appendChild(btn('Watch', 'btn btn-amber', function(){ setReview(b, 'watch'); }));
+  if (b.review_status !== 'relevant') act.appendChild(btn('Relevant', 'btn btn-green', function(){ setReview(b, 'relevant'); }));
+  if (b.review_status !== 'dismissed') act.appendChild(btn('Dismiss', 'btn btn-red', function(){ setReview(b, 'dismissed'); }));
+  if (b.review_status !== 'new') act.appendChild(btn('Reset to new', 'btn', function(){ setReview(b, 'new'); }));
+  act.appendChild(btn('Note', 'btn btn-link', function(){ noteBox(el, b); }));
+  act.appendChild(btn('Details', 'btn btn-link', function(){ toggleDetail(b); }));
+  if (b.source_url && b.source_url !== b.url) act.appendChild(link('Source', b.source_url));
+  el.appendChild(act);
+  return el;
+}
+
+function link(t, href){ var a = document.createElement('a'); a.className = 'btn btn-link'; a.textContent = t; a.href = href; a.target = '_blank'; a.rel = 'noopener'; return a; }
+
+function noteBox(el, b){
+  if (el.querySelector('textarea.note')) return;
+  var ta = document.createElement('textarea'); ta.className = 'note'; ta.value = b.notes || ''; ta.placeholder = 'Committee note';
+  var save = btn('Save note', 'btn btn-primary', function(){
+    sb.from('leg_bills').update({notes: ta.value.trim() || null, reviewed_by: user, reviewed_at: new Date().toISOString()})
+      .eq('id', b.id).then(function(r){ if (r.error) alert('Save failed: ' + r.error.message); else load(); });
+  });
+  el.appendChild(ta); el.appendChild(save);
+}
+
+function toggleDetail(b){
+  var d = $('detail-' + b.id);
+  if (d.style.display === 'block'){ d.style.display = 'none'; return; }
+  d.style.display = 'block'; d.innerHTML = '<p>Loading</p>';
+  sb.from('leg_bills').select('description,history,calendar,related,subjects,text_url,current_location,introduced_at,source_url')
+    .eq('id', b.id).single().then(function(r){
+      if (r.error){ d.innerHTML = '<p>' + esc(r.error.message) + '</p>'; return; }
+      var x = r.data, h = '';
+      if (x.description) h += '<p>' + esc(x.description.slice(0, 3000)) + '</p>';
+      var bits = [];
+      if (x.introduced_at) bits.push('Introduced ' + esc(x.introduced_at));
+      if (x.current_location) bits.push(esc(x.current_location));
+      if (x.subjects && x.subjects.length) bits.push('Subjects: ' + esc(x.subjects.join(', ')));
+      if (x.related && x.related.length) bits.push('Related: ' + esc(x.related.map(function(r){ return r.type + ' ' + r.bill_number; }).join(', ')));
+      if (x.text_url) bits.push('<a href="' + esc(x.text_url) + '" target="_blank" rel="noopener">Bill text</a>');
+      if (bits.length) h += '<p>' + bits.join(' &middot; ') + '</p>';
+      if (x.calendar && x.calendar.length){
+        var fut = x.calendar.filter(function(c){ return c.date >= TODAY; });
+        if (fut.length) h += '<p><b>Upcoming:</b> ' + fut.map(function(c){ return esc(c.date + ' ' + (c.time || '') + ' ' + (c.description || '')); }).join('; ') + '</p>';
+      }
+      if (x.history && x.history.length){
+        h += '<div class="section">History</div>';
+        x.history.slice().reverse().slice(0, 40).forEach(function(s){
+          h += '<div class="hist"><b>' + esc(s.date || '') + '</b> ' + esc(s.chamber || '') + ' ' + esc(s.action || '') + (s.vote ? ' <i>' + esc(s.vote) + '</i>' : '') + '</div>';
+        });
+      }
+      d.innerHTML = h || '<p>No detail stored yet.</p>';
+    });
+}
+
+function setReview(b, status){
+  sb.from('leg_bills').update({review_status: status, reviewed_by: user, reviewed_at: new Date().toISOString()})
+    .eq('id', b.id).then(function(r){
+      if (r.error) alert('Update failed: ' + r.error.message);
+      else load();
+    });
+}
+
+function renderList(rows, emptyText, grouped){
+  var list = $('list'); list.innerHTML = '';
+  rows = dedupe(rows).filter(passesFilters);
+  if (!rows.length){ list.innerHTML = '<div class="empty">' + esc(emptyText) + '</div>'; return; }
+  if (grouped){
+    rows.sort(function(a, b){ return jurOrder(a.jurisdiction) - jurOrder(b.jurisdiction) || (a.jurisdiction > b.jurisdiction ? 1 : a.jurisdiction < b.jurisdiction ? -1 : 0) || ((b.last_action_at || '') > (a.last_action_at || '') ? 1 : -1); });
+    var cur = null;
+    rows.forEach(function(b){
+      if (b.jurisdiction !== cur){ cur = b.jurisdiction; var s = document.createElement('div'); s.className = 'section'; s.textContent = cur === 'US' ? 'Federal' : cur === 'OR' ? 'Oregon' : cur; list.appendChild(s); }
+      list.appendChild(card(b));
+    });
+  } else {
+    rows.forEach(function(b){ list.appendChild(card(b)); });
+  }
+}
+
+function loadLane(t){
+  var q = function(){ var s = sb.from('leg_bills').select(COLS).in('review_status', t.status); if (t.lane) s = s.eq('lane', t.lane); else s = s.neq('lane', 'other'); return s.order('last_action_at', {ascending:false, nullsFirst:false}); };
+  fetchAll(q).then(function(rows){ renderList(rows, 'Nothing here.', true); })
+    .catch(function(e){ $('list').innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; });
+}
+
+function loadDeadlines(){
+  var q = function(){ return sb.from('leg_bills').select(COLS).in('review_status', LIVE).neq('lane', 'other')
+    .or('comments_close_on.gte.' + TODAY + ',next_event_at.gte.' + TODAY); };
+  fetchAll(q).then(function(rows){
+    rows.sort(function(a, b){ var da = [a.comments_close_on, a.next_event_at].filter(function(d){ return d && d >= TODAY; }).sort()[0]; var db = [b.comments_close_on, b.next_event_at].filter(function(d){ return d && d >= TODAY; }).sort()[0]; return da > db ? 1 : -1; });
+    renderList(rows, 'No comment deadlines or hearings coming up.', false);
+  }).catch(function(e){ $('list').innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; });
+}
+
+function loadMovement(){
+  var since = new Date(Date.now() - 21 * 86400000).toISOString();
+  sb.from('leg_bill_events').select('id,bill_id,kind,occurred_at,seen_at,previous_stage,new_stage,previous_value,new_value,action')
+    .neq('kind', 'new').gte('seen_at', since).order('seen_at', {ascending:false}).limit(1000)
+    .then(function(r){
+      if (r.error){ $('list').innerHTML = '<div class="empty">' + esc(r.error.message) + '</div>'; return; }
+      var byBill = {};
+      r.data.forEach(function(e){ (byBill[e.bill_id] = byBill[e.bill_id] || []).push(e); });
+      var ids = Object.keys(byBill);
+      if (!ids.length){ $('list').innerHTML = '<div class="empty">No status changes in the last three weeks. New bills appear in their lane tabs.</div>'; return; }
+      fetchAll(function(){ return sb.from('leg_bills').select(COLS).in('id', ids).in('review_status', LIVE).neq('lane', 'other'); })
+        .then(function(rows){
+          var list = $('list'); list.innerHTML = '';
+          rows = dedupe(rows).filter(passesFilters);
+          if (!rows.length){ list.innerHTML = '<div class="empty">No movement on tracked bills.</div>'; return; }
+          rows.sort(function(a, b){ return jurOrder(a.jurisdiction) - jurOrder(b.jurisdiction) || ((b.last_changed_at || '') > (a.last_changed_at || '') ? 1 : -1); });
+          rows.forEach(function(b){
+            var evs = byBill[b.id].slice().sort(function(x, y){ return (x.seen_at > y.seen_at) ? 1 : -1; });
+            var h = evs.map(function(e){
+              var txt = e.kind === 'stage' ? 'stage: ' + (STAGE_LABEL[e.previous_stage] || e.previous_stage || '?') + ' to ' + (STAGE_LABEL[e.new_stage] || e.new_stage)
+                : e.kind === 'action' ? 'action: ' + (e.new_value || '')
+                : e.kind === 'calendar' ? 'hearing: ' + (e.new_value || '')
+                : e.kind + ': ' + (e.new_value || '');
+              return '<div class="event"><b>' + esc(e.occurred_at || e.seen_at.slice(0, 10)) + '</b> ' + esc(txt.slice(0, 260)) + '</div>';
+            }).join('');
+            list.appendChild(card(b, h));
+          });
+        });
+    });
+}
+
+function load(){
+  var t = TABS.filter(function(x){ return x.key === current; })[0];
+  $('toolbar').style.display = 'flex';
+  if (t.key === 'movement') loadMovement();
+  else if (t.key === 'deadlines') loadDeadlines();
+  else loadLane(t);
+  updateCounts();
+}
+
+function updateCounts(){
+  var lanes = ['ai_music','ticketing','music_policy','ai_general'];
+  var jobs = lanes.map(function(l){ return sb.from('leg_bills').select('id', {count:'exact', head:true}).eq('lane', l).in('review_status', LIVE).then(function(r){ return ['lane:' + l, r.count || 0]; }); });
+  jobs.push(sb.from('leg_bills').select('id', {count:'exact', head:true}).in('review_status', ['watch','relevant']).then(function(r){ return ['watch', r.count || 0]; }));
+  jobs.push(sb.from('leg_bills').select('id', {count:'exact', head:true}).eq('review_status', 'dismissed').then(function(r){ return ['dismissed', r.count || 0]; }));
+  jobs.push(sb.from('leg_bills').select('id', {count:'exact', head:true}).eq('review_status', 'noise').then(function(r){ return ['noise', r.count || 0]; }));
+  jobs.push(sb.from('leg_bills').select('id', {count:'exact', head:true}).then(function(r){ return ['total', r.count || 0]; }));
+  jobs.push(sb.from('leg_runs').select('started_at,sources_run,queries_used').eq('kind', 'billscan').order('started_at', {ascending:false}).limit(1).then(function(r){ return ['run', (r.data && r.data[0]) || null]; }));
+  Promise.all(jobs).then(function(pairs){
+    var c = {}; pairs.forEach(function(p){ c[p[0]] = p[1]; });
+    TABS.forEach(function(t){
+      var n = t.lane ? c['lane:' + t.lane] : (t.key === 'watch' ? c.watch : t.key === 'dismissed' ? c.dismissed : t.key === 'noise' ? c.noise : null);
+      var el = $('tab-' + t.key);
+      if (el) el.innerHTML = esc(t.label) + (n === null || n === undefined ? '' : '<span class="count">' + n + '</span>');
+    });
+    var run = c.run;
+    $('foot').innerHTML = (c.total || 0) + ' items tracked. ' + (run ? 'Last scan ' + esc(run.started_at.slice(0, 16).replace('T', ' ')) + ' UTC.' : 'No scan yet.') +
+      '<br>Relevance is keyword rules plus committee review, no AI scoring. Bill data from <a href="https://legiscan.com" target="_blank" rel="noopener">LegiScan</a> (CC BY 4.0), ' +
+      'the <a href="https://olis.oregonlegislature.gov" target="_blank" rel="noopener">Oregon Legislature (OLIS)</a>, the ' +
+      '<a href="https://www.federalregister.gov" target="_blank" rel="noopener">Federal Register</a> and <a href="https://www.congress.gov" target="_blank" rel="noopener">Congress.gov</a>. ' +
+      'Private committee tool for Music Oregon, not for redistribution.';
+  });
+}
+
+function drawTabs(){
+  var n = $('tabs'); n.innerHTML = '';
+  TABS.forEach(function(t){
+    var b = document.createElement('button');
+    b.className = 'tab' + (t.key === current ? ' active' : ''); b.id = 'tab-' + t.key;
+    b.textContent = t.label;
+    b.onclick = function(){ current = t.key; drawTabs(); load(); };
+    n.appendChild(b);
+  });
+}
+
+function show(session){
+  var loggedIn = !!session;
+  user = loggedIn ? (session.user.email || session.user.id) : null;
+  $('loginScreen').style.display = loggedIn ? 'none' : 'flex';
+  $('app').style.display = loggedIn ? 'block' : 'none';
+  if (loggedIn){ drawTabs(); load(); }
+}
+
+$('loginBtn').onclick = function(){
+  $('loginErr').style.display = 'none';
+  sb.auth.signInWithPassword({email: $('email').value.trim(), password: $('pass').value})
+    .then(function(r){
+      if (r.error){ $('loginErr').textContent = r.error.message; $('loginErr').style.display = 'block'; }
+      else show(r.data.session);
+    });
+};
+$('pass').addEventListener('keydown', function(e){ if (e.key === 'Enter') $('loginBtn').click(); });
+$('email').addEventListener('keydown', function(e){ if (e.key === 'Enter') $('pass').focus(); });
+$('outBtn').onclick = function(){ sb.auth.signOut().then(function(){ show(null); }); };
+$('refreshBtn').onclick = load;
+$('search').addEventListener('input', function(e){ query = e.target.value.trim().toLowerCase(); load(); });
+Array.prototype.forEach.call(document.querySelectorAll('.chip'), function(ch){
+  ch.onclick = function(){
+    Array.prototype.forEach.call(document.querySelectorAll('.chip'), function(x){ x.classList.remove('active'); });
+    ch.classList.add('active'); jur = ch.dataset.jur; load();
+  };
+});
+
+sb.auth.getSession().then(function(r){ show(r.data && r.data.session); });
+</script>
+</body>
+</html>
