@@ -241,15 +241,18 @@ function rankSort(a, b){
 function dateSort(a, b){ var x = a.last_action_at || '', y = b.last_action_at || ''; return y > x ? 1 : y < x ? -1 : 0; }
 function lawSort(a, b){ var x = a.effective_on || a.last_action_at || '', y = b.effective_on || b.last_action_at || ''; return y > x ? 1 : y < x ? -1 : 0; }
 
+function matchesQuery(b){
+  if (!query) return true;
+  var hay = ((b.title || '') + ' ' + (b.bill_number || '') + ' ' + (b.sponsor_summary || '') + ' ' + (b.agency || '') + ' ' +
+    (b.jurisdiction || '') + ' ' + (b.description || '') + ' ' + (b.match_terms || '')).toLowerCase();
+  return hay.indexOf(query) >= 0;
+}
 function passes(b){
   if (topic !== 'all' && b.lane !== topic) return false;
-  if (query){
-    var hay = ((b.title || '') + ' ' + (b.bill_number || '') + ' ' + (b.sponsor_summary || '') + ' ' + (b.agency || '') + ' ' +
-      (b.jurisdiction || '') + ' ' + (b.description || '') + ' ' + (b.match_terms || '')).toLowerCase();
-    if (hay.indexOf(query) < 0) return false;
-  }
-  return true;
+  return matchesQuery(b);
 }
+// the two off-topic archive bins sit outside both topic chips, so only the search applies there
+function archivePasses(b, set){ return (set.key === 'ai_general' || set.key === 'music_policy') ? matchesQuery(b) : passes(b); }
 
 // Popular name for federal bills: LegiScan runs the short title and the long
 // title together ("TICKET Act Transparency In Charges for ... Act"). Keep the
@@ -812,13 +815,13 @@ function renderMine(list){
 function renderArchive(list){
   var bar = el('div', 'toolbar'); bar.style.padding = '8px 0 0';
   ARCHIVE_SETS.forEach(function(s){
-    var c = el('span', 'chip' + (s.key === archiveSet ? ' active' : ''), esc(s.label) + '<span class="count">' + bills.filter(s.test).length + '</span>');
+    var c = el('span', 'chip' + (s.key === archiveSet ? ' active' : ''), esc(s.label) + '<span class="count">' + bills.filter(function(b){ return s.test(b) && archivePasses(b, s); }).length + '</span>');
     c.onclick = function(){ archiveSet = s.key; render(); };
     bar.appendChild(c);
   });
   list.appendChild(bar);
   var set = ARCHIVE_SETS.filter(function(s){ return s.key === archiveSet; })[0];
-  var rows = bills.filter(function(b){ return set.test(b) && passes(b); }).sort(dateSort);
+  var rows = bills.filter(function(b){ return set.test(b) && archivePasses(b, set); }).sort(dateSort);
   var lead = {dead: 'Bills whose session ended without passage. Kept for reference; many come back next session.',
     vetoed: 'Vetoed bills.', dismissed: 'Set aside by a member for the whole committee. Open one and use Clear to bring it back.',
     noise: 'Hidden by a keyword rule. The rule that fired is on each row. If one is wrong, Clear and tell Jeffrey.',
