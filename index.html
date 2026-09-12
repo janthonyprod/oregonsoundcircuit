@@ -50,8 +50,6 @@ h2 select{font:inherit;font-size:14px;font-weight:500;text-transform:none;letter
 .note:first-child{border-top:none}
 .note b{color:var(--text)}
 .note .n{font-weight:500;color:var(--text-tertiary);margin-left:4px}
-.chips{display:flex;flex-wrap:wrap;gap:6px;padding:10px 14px;border-top:1px solid var(--rule)}
-.chips:first-child{border-top:none}
 .row{display:grid;grid-template-columns:minmax(82px,auto) 1fr auto auto;column-gap:10px;row-gap:2px;align-items:baseline;padding:9px 12px;border-top:1px solid var(--rule);cursor:pointer}
 .row:first-child{border-top:none}
 .row:hover{background:#fafaf8}
@@ -195,7 +193,7 @@ var LANE_LABEL = {ai_music:'AI + Music', ticketing:'Ticketing'};
 var VIEWS = [
   {key:'brief', label:'Brief'},
   {key:'active', label:'Active'},
-  {key:'models', label:'Models'},
+  {key:'enacted', label:'Enacted'},
   {key:'mine', label:'My list'},
   {key:'archive', label:'Archive'}
 ];
@@ -207,11 +205,7 @@ var ARCHIVE_SETS = [
   {key:'ai_general', label:'AI, not music', test:function(b){ return b.lane === 'ai_general' && isLive(b); }},
   {key:'music_policy', label:'Music industry, no AI', test:function(b){ return b.lane === 'music_policy' && isLive(b); }}
 ];
-// Themes for the model-legislation library, read off the stored rule terms. Nothing is generated.
-var THEMES = ['Voice, likeness and digital replicas', 'Provenance, labeling and training data', 'Synthetic media and disclosure', 'AI, other',
-  'Speculative tickets', 'Bots and circumvention', 'Pricing, fees and refunds', 'Resale and the secondary market', 'Ticketing, other'];
-
-var view = 'brief', topic = 'all', query = '', archiveSet = 'dead', themeSet = 'all', windowDays = 30, user = null, uid = null;
+var view = 'brief', topic = 'all', query = '', archiveSet = 'dead', windowDays = 30, user = null, uid = null;
 var marks = {}, marksReady = true;  // this member's private list: bill_id -> {id, note}
 var bills = [], billById = {}, events = [], eventsByBill = {}, lastRun = null, open = {}, showStates = {}, groupOf = {};
 
@@ -333,22 +327,6 @@ function blurbOf(b){
   if (terms.length) return '<span class="why">Matched: ' + esc(terms.join(', ')) + '</span>';
   return ov ? esc(ov.text) : '';
 }
-function themeOf(b){
-  var m = (b.match_terms || '').toLowerCase();
-  function has(){ for (var i = 0; i < arguments.length; i++) if (m.indexOf(arguments[i]) >= 0) return true; return false; }
-  if (b.lane === 'ticketing'){
-    if (has('speculative')) return 'Speculative tickets';
-    if (has('bot', 'circumvent')) return 'Bots and circumvention';
-    if (has('pricing', 'ticket price', 'fee', 'refund', 'all-in', 'total price')) return 'Pricing, fees and refunds';
-    if (has('resale', 'resell', 'secondary', 'scalp', 'reseller')) return 'Resale and the secondary market';
-    return 'Ticketing, other';
-  }
-  if (has('digital replica', 'voice', 'likeness', 'publicity', 'no fakes', 'replication')) return 'Voice, likeness and digital replicas';
-  if (has('provenance', 'training data', 'copyright', 'label', 'watermark')) return 'Provenance, labeling and training data';
-  if (has('synthetic', 'ai-generated', 'generated content', 'deepfake', 'disclos')) return 'Synthetic media and disclosure';
-  return 'AI, other';
-}
-
 // Oregon bills arrive from both OLIS and LegiScan; keep the OLIS copy.
 function dedupe(rows){
   var olis = {};
@@ -677,6 +655,38 @@ function section(title, rows, opts){
 }
 function goto(v, extra){ view = v; if (extra) extra(); render(); window.scrollTo(0, 0); }
 
+// Oregon shows its whole picture wherever it appears: pending bills, laws on the books, what died
+function oregonBlock(or){
+  var orActive = or.filter(isActive).sort(rankSort);
+  var orEnacted = or.filter(function(b){ return b.status_stage === 'enacted'; }).sort(lawSort);
+  var orDead = or.filter(function(b){ return b.status_stage === 'dead'; }).sort(dateSort);
+  var g = el('div', 'group');
+  if (!or.length) g.appendChild(el('div', 'note', 'No Oregon items on these topics.'));
+  else if (!orActive.length) g.appendChild(el('div', 'note', '<b>Nothing pending.</b> The next session opens early in the year and presession filings usually post from December; they appear here as OLIS publishes them.'));
+  collapse(orActive).forEach(function(it){ g.appendChild(row(it.b, {members: it.members})); if (open[it.b.id]) g.appendChild(panel(it.b, it.members)); });
+  if (orEnacted.length){
+    g.appendChild(el('div', 'note', '<b>On the books</b><span class="n">' + orEnacted.length + '</span>'));
+    orEnacted.forEach(function(b){ g.appendChild(row(b, enactedOpts(b))); if (open[b.id]) g.appendChild(panel(b)); });
+  }
+  if (orDead.length) g.appendChild(el('div', 'note', '<b>Did not pass</b> ' + orDead.map(function(b){ return esc(b.bill_number) + ' (' + esc((b.session_name || '').slice(0, 4)) + ') ' + esc(clip(shortTitle(b), 80)); }).join(' · ')));
+  return g;
+}
+
+// every other state behind one show link, grouped by state
+function otherStates(list, st, key, sorter, rowOpts){
+  var expanded = showStates[key] || !!query;
+  var h = el('h2', null, 'Other states <span class="n">' + collapse(st).length + '</span>' +
+    (st.length ? '<span class="toggle">' + (expanded ? 'hide' : 'show') + '</span>' : ''));
+  var t = h.querySelector('.toggle');
+  if (t) t.onclick = function(){ showStates[key] = !expanded; render(); };
+  list.appendChild(h);
+  if (!st.length) list.appendChild(el('div', 'empty', 'No other-state items.'));
+  else if (expanded){
+    st.sort(function(a, b){ return a.jurisdiction < b.jurisdiction ? -1 : a.jurisdiction > b.jurisdiction ? 1 : sorter(a, b); });
+    list.appendChild(listRows(st, {rowOpts: rowOpts}));
+  }
+}
+
 function renderBrief(list){
   var live = bills.filter(function(b){ return isTopic(b) && isLive(b) && passes(b); });
   var living = live.filter(isActive);
@@ -684,7 +694,6 @@ function renderBrief(list){
   living.forEach(function(b){ if (b.jurisdiction !== 'US' && b.jurisdiction !== 'OR') states[b.jurisdiction] = (states[b.jurisdiction] || 0) + 1; });
   var stateNames = Object.keys(states).sort(function(a, b){ return states[b] - states[a] || (a < b ? -1 : 1); });
   var desk = live.filter(function(b){ return b.status_stage === 'passed_both'; }).sort(dateSort);
-  var elsewhere = live.filter(function(b){ return b.jurisdiction !== 'OR' && isEnacted(b); });
   var orLaws = live.filter(function(b){ return b.jurisdiction === 'OR' && b.status_stage === 'enacted'; });
 
   // 1. state of play
@@ -694,46 +703,19 @@ function renderBrief(list){
     (lastRun ? ' · last scan ' + esc(fmt(lastRun)) + ' at ' + esc(lastRun.slice(11, 16)) + ' UTC' : ' · no scan recorded yet') + '</span>' +
     '<span><b>' + collapse(living).length + '</b> living bills on our topics in <b>' + stateNames.length + ' states</b> and Congress</span>' +
     '<span><b>' + collapse(desk).length + '</b> on a governor\'s desk</span>' +
-    '<span><b>' + collapse(elsewhere).length + '</b> enacted elsewhere to learn from</span>' +
+    '<span><b>' + collapse(live.filter(isEnacted)).length + '</b> enacted laws and final rules</span>' +
     '<span><b>' + orLaws.length + '</b> Oregon laws on the books</span>';
   list.appendChild(strip);
 
   // 2. Oregon, always first, even when quiet
-  var or = live.filter(function(b){ return b.jurisdiction === 'OR'; });
-  var orActive = or.filter(isActive).sort(rankSort);
-  var orEnacted = or.filter(function(b){ return b.status_stage === 'enacted'; }).sort(lawSort);
-  var orDead = or.filter(function(b){ return b.status_stage === 'dead'; }).sort(dateSort);
-  list.appendChild(heading('Oregon', null, {more: 'All Oregon items', onMore: function(){ view = 'active'; }}));
-  var g = el('div', 'group');
-  if (!orActive.length) g.appendChild(el('div', 'note', '<b>Nothing pending.</b> The next session opens early in the year and presession filings usually post from December; they appear here as OLIS publishes them.'));
-  collapse(orActive).forEach(function(it){ g.appendChild(row(it.b, {members: it.members})); if (open[it.b.id]) g.appendChild(panel(it.b, it.members)); });
-  if (orEnacted.length){
-    g.appendChild(el('div', 'note', '<b>On the books</b>'));
-    orEnacted.forEach(function(b){ g.appendChild(row(b, enactedOpts(b))); if (open[b.id]) g.appendChild(panel(b)); });
-  }
-  if (orDead.length) g.appendChild(el('div', 'note', '<b>Did not pass</b> ' + orDead.map(function(b){ return esc(b.bill_number) + ' (' + esc((b.session_name || '').slice(0, 4)) + ') ' + esc(clip(shortTitle(b), 80)); }).join(' · ')));
-  if (!or.length) g.appendChild(el('div', 'note', 'No Oregon items on these topics.'));
-  list.appendChild(g);
+  list.appendChild(heading('Oregon', null));
+  list.appendChild(oregonBlock(live.filter(function(b){ return b.jurisdiction === 'OR'; })));
 
-  // 3. models: what other states and agencies have already put on the books
-  list.appendChild(heading('Models for Oregon and Portland', collapse(elsewhere).length + ' enacted elsewhere', {more: 'Open Models', onMore: function(){ view = 'models'; themeSet = 'all'; }}));
-  g = el('div', 'group');
-  if (desk.length){
-    g.appendChild(el('div', 'note', '<b>Awaiting a governor\'s signature</b><span class="n">' + collapse(desk).length + '</span>'));
-    collapse(desk).forEach(function(it){ g.appendChild(row(it.b, merge({members: it.members}, deskOpts(it.b)))); if (open[it.b.id]) g.appendChild(panel(it.b, it.members)); });
-  }
-  var themeCounts = {};
-  elsewhere.forEach(function(b){ var t = themeOf(b); themeCounts[t] = (themeCounts[t] || 0) + 1; });
-  var chips = el('div', 'chips');
-  THEMES.forEach(function(t){
-    if (!themeCounts[t]) return;
-    var c = el('span', 'chip', esc(t) + '<span class="count">' + themeCounts[t] + '</span>');
-    c.onclick = function(){ goto('models', function(){ themeSet = t; }); };
-    chips.appendChild(c);
-  });
-  if (!elsewhere.length) chips.appendChild(el('span', 'empty', 'Nothing enacted elsewhere on these topics yet.'));
-  g.appendChild(chips);
-  list.appendChild(g);
+  // 3. close to becoming law: on a governor's desk, or past one chamber
+  var close = live.filter(function(b){ return b.status_stage === 'passed_both' || b.status_stage === 'passed_chamber'; }).sort(rankSort);
+  list.appendChild(section('Close to becoming law', close, {empty: 'No bill past a chamber vote right now.',
+    rowOpts: function(b){ return b.status_stage === 'passed_both' ? deskOpts(b) : {}; }}));
+  var g;
 
   // 4. movement, from each bill's last action
   var since = daysAgo(windowDays);
@@ -777,55 +759,28 @@ function renderBrief(list){
 
 function renderActive(list){
   var rows = bills.filter(function(b){ return isTopic(b) && isLive(b) && isActive(b) && passes(b); }).sort(rankSort);
-  list.appendChild(el('div', 'lead', 'Living bills only, closest to law first. Companion bills are shown once with the other versions listed. Bills that did not pass sit in the Archive.'));
+  list.appendChild(el('div', 'lead', 'Bills still moving, closest to law first. Oregon also shows what is already on the books. Companion bills are shown once with the other versions listed. Bills that did not pass sit in the Archive.'));
   var or = rows.filter(function(b){ return b.jurisdiction === 'OR'; });
   var us = rows.filter(function(b){ return b.jurisdiction === 'US'; });
   var st = rows.filter(function(b){ return b.jurisdiction !== 'OR' && b.jurisdiction !== 'US'; });
-  list.appendChild(section('Oregon', or, {empty: 'Nothing pending in Oregon. New filings appear here as OLIS publishes them.'}));
+  list.appendChild(heading('Oregon', or.length ? collapse(or).length + ' pending' : null));
+  list.appendChild(oregonBlock(bills.filter(function(b){ return b.jurisdiction === 'OR' && isTopic(b) && isLive(b) && passes(b); })));
   list.appendChild(section('Federal', us, {empty: 'Nothing federal.'}));
   var agencies = bills.filter(function(b){ return isRule(b) && isTopic(b) && isLive(b) && !isEnacted(b) && passes(b); })
     .sort(function(a, b){ var x = nextDate(a), y = nextDate(b); if (x && !y) return -1; if (y && !x) return 1; if (x && y && x !== y) return x < y ? -1 : 1; return dateSort(a, b); });
-  list.appendChild(section('Federal agencies', agencies, {empty: 'No open rulemakings or inquiries. Final rules are under Models.'}));
-  var expanded = showStates['active'] || !!query;
-  var h = el('h2', null, 'Other states <span class="n">' + collapse(st).length + '</span>' +
-    (st.length ? '<span class="toggle">' + (expanded ? 'hide' : 'show') + '</span>' : ''));
-  var t = h.querySelector('.toggle');
-  if (t) t.onclick = function(){ showStates['active'] = !expanded; render(); };
-  list.appendChild(h);
-  if (!st.length) list.appendChild(el('div', 'empty', 'No other-state items.'));
-  else if (expanded){
-    st.sort(function(a, b){ return a.jurisdiction < b.jurisdiction ? -1 : a.jurisdiction > b.jurisdiction ? 1 : rankSort(a, b); });
-    list.appendChild(listRows(st));
-  }
+  list.appendChild(section('Federal agencies', agencies, {empty: 'No open rulemakings or inquiries. Final rules are under Enacted.'}));
+  otherStates(list, st, 'active', rankSort, null);
 }
 
-function renderModels(list){
+function renderEnacted(list){
   var rows = bills.filter(function(b){ return isTopic(b) && isLive(b) && isEnacted(b) && passes(b); }).sort(lawSort);
-  var desk = bills.filter(function(b){ return isTopic(b) && isLive(b) && b.status_stage === 'passed_both' && passes(b); }).sort(dateSort);
-  var counts = {};
-  rows.forEach(function(b){ var t = themeOf(b); counts[t] = (counts[t] || 0) + 1; });
-  var bar = el('div', 'toolbar'); bar.style.padding = '8px 0 0';
-  var all = el('span', 'chip' + (themeSet === 'all' ? ' active' : ''), 'All themes<span class="count">' + rows.length + '</span>');
-  all.onclick = function(){ themeSet = 'all'; render(); };
-  bar.appendChild(all);
-  THEMES.forEach(function(t){
-    if (!counts[t]) return;
-    var c = el('span', 'chip' + (t === themeSet ? ' active' : ''), esc(t) + '<span class="count">' + counts[t] + '</span>');
-    c.onclick = function(){ themeSet = t; render(); };
-    bar.appendChild(c);
-  });
-  list.appendChild(bar);
-  list.appendChild(el('div', 'lead', 'Laws already on the books and final agency rules, grouped by theme from the words that matched. Open one for its summary and text; mark it Relevant to keep it in front of the committee.'));
-  if (themeSet === 'all') list.appendChild(section('Awaiting a governor\'s signature', desk, {empty: 'Nothing on a governor\'s desk right now.', rowOpts: deskOpts}));
-  var any = false;
-  THEMES.forEach(function(t){
-    if (themeSet !== 'all' && t !== themeSet) return;
-    var tr = rows.filter(function(b){ return themeOf(b) === t; });
-    if (!tr.length && themeSet === 'all') return;
-    any = true;
-    list.appendChild(section(t, tr, {empty: 'Nothing enacted under this theme yet.', rowOpts: enactedOpts}));
-  });
-  if (!any) list.appendChild(el('div', 'empty', 'Nothing enacted on these topics yet.'));
+  list.appendChild(el('div', 'lead', 'Signed into law, or final agency rules. Newest first: Oregon, then federal, then every other state.'));
+  var or = rows.filter(function(b){ return b.jurisdiction === 'OR'; });
+  var us = rows.filter(function(b){ return b.jurisdiction === 'US'; });
+  var st = rows.filter(function(b){ return b.jurisdiction !== 'OR' && b.jurisdiction !== 'US'; });
+  list.appendChild(section('Oregon', or, {empty: 'No Oregon law on these topics yet.', rowOpts: enactedOpts}));
+  list.appendChild(section('Federal', us, {empty: 'Nothing federal.', rowOpts: enactedOpts}));
+  otherStates(list, st, 'enacted', lawSort, enactedOpts);
 }
 
 function renderMine(list){
@@ -862,7 +817,7 @@ function render(){
   var list = $('list'); list.innerHTML = '';
   if (view === 'brief') renderBrief(list);
   else if (view === 'active') renderActive(list);
-  else if (view === 'models') renderModels(list);
+  else if (view === 'enacted') renderEnacted(list);
   else if (view === 'mine') renderMine(list);
   else renderArchive(list);
   drawTabs();
@@ -870,7 +825,7 @@ function render(){
   var active = collapse(bills.filter(function(b){ return isTopic(b) && isLive(b) && isActive(b); })).length;
   $('foot').innerHTML = bills.length + ' items in the database, ' + active + ' active bills on the two topics. ' +
     (lastRun ? 'Last scan ' + esc(lastRun.slice(0, 16).replace('T', ' ')) + ' UTC. ' : '') +
-    '<br>Relevance is keyword rules plus committee review, no AI scoring; summaries and themes come from the sources\' own text. Bill data from <a href="https://legiscan.com" target="_blank" rel="noopener">LegiScan</a> (CC BY 4.0), ' +
+    '<br>Relevance is keyword rules plus committee review, no AI scoring; summaries come from the sources\' own text. Bill data from <a href="https://legiscan.com" target="_blank" rel="noopener">LegiScan</a> (CC BY 4.0), ' +
     'the <a href="https://olis.oregonlegislature.gov" target="_blank" rel="noopener">Oregon Legislature (OLIS)</a>, the ' +
     '<a href="https://www.federalregister.gov" target="_blank" rel="noopener">Federal Register</a> and <a href="https://www.congress.gov" target="_blank" rel="noopener">Congress.gov</a>. ' +
     'Private committee tool for Music Oregon, not for redistribution.';
@@ -881,7 +836,7 @@ function counts(){
   return {
     brief: null,
     active: collapse(live.filter(isActive)).length,
-    models: collapse(live.filter(isEnacted)).length,
+    enacted: collapse(live.filter(isEnacted)).length,
     mine: Object.keys(marks).length + bills.filter(function(b){ return b.review_status === 'relevant' || b.review_status === 'watch'; }).length,
     archive: null
   };
