@@ -58,6 +58,9 @@ h2 .toggle{font-size:12px;font-weight:500;text-transform:none;letter-spacing:0;c
 .flag{font-size:11.5px;color:var(--red);font-weight:600;white-space:nowrap}
 .mark{font-size:11px;padding:1px 6px;border-radius:10px;border:1px solid var(--rule);color:var(--text-secondary);white-space:nowrap}
 .mark.watch{background:#fff3d6;border-color:#f0d9a0;color:#8a5a00}.mark.relevant{background:#def7e6;border-color:#b7e4c4;color:#0a7d38}
+.mark.mine{background:#e8eefc;border-color:#c5d3f5;color:#2b4c9b}
+.actions .lbl{font-size:11px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.05em;margin-right:2px}
+.mynote{font-size:12.5px;color:var(--text-secondary);background:#eef2fb;border:1px solid #d6e0f5;border-radius:6px;padding:6px 8px;white-space:pre-wrap;margin:6px 0}
 .panel{padding:10px 14px 12px 14px;border-top:1px solid var(--rule);background:#f4f6f9;font-size:13px}
 .panel .full{font-weight:600;margin-bottom:4px}
 .panel .ov{font-size:13.5px;color:var(--text);margin:4px 0 8px;line-height:1.5}
@@ -150,7 +153,8 @@ var ARCHIVE_SETS = [
   {key:'music_policy', label:'Music industry, no AI', test:function(b){ return b.lane === 'music_policy' && LIVE.indexOf(b.review_status) >= 0; }}
 ];
 
-var view = 'now', topic = 'all', query = '', archiveSet = 'dead', user = null;
+var view = 'now', topic = 'all', query = '', archiveSet = 'dead', user = null, uid = null;
+var marks = {}, marksReady = true;  // this member's private list: bill_id -> {id, note}
 var bills = [], events = [], lastRun = null, open = {}, showStates = {};
 
 function esc(s){ var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
@@ -246,11 +250,14 @@ function loadData(){
     fetchAll(function(){ return sb.from('leg_bills').select(COLS).order('id'); }),
     sb.from('leg_bill_events').select('id,bill_id,kind,occurred_at,seen_at,previous_stage,new_stage,new_value,action')
       .neq('kind', 'new').gte('seen_at', daysAgo(30) + 'T00:00:00').order('seen_at', {ascending:false}).limit(2000),
-    sb.from('leg_runs').select('started_at').eq('kind', 'billscan').order('started_at', {ascending:false}).limit(1)
+    sb.from('leg_runs').select('started_at').eq('kind', 'billscan').order('started_at', {ascending:false}).limit(1),
+    sb.from('leg_marks').select('id,bill_id,mark,note').limit(2000)
   ]).then(function(res){
     bills = dedupe(res[0]);
     events = (res[1].data || []);
     lastRun = res[2].data && res[2].data[0] ? res[2].data[0].started_at : null;
+    marks = {}; marksReady = !res[3].error;
+    (res[3].data || []).forEach(function(m){ marks[m.bill_id] = m; });
     render();
   }).catch(function(e){ $('list').innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; });
 }
@@ -263,6 +270,7 @@ function row(b, extraRight){
   var nd = nextDate(b);
   if (nd) flag = '<span class="flag">' + (b.comments_close_on === nd ? 'comments close ' : 'hearing ') + esc(nd) + '</span>';
   var mark = (b.review_status === 'watch' || b.review_status === 'relevant') ? '<span class="mark ' + b.review_status + '">' + b.review_status + '</span>' : '';
+  if (marks[b.id]) mark += '<span class="mark mine">my list</span>';
   r.innerHTML = '<span class="num">' + jurPill(b.jurisdiction) + esc(b.bill_number || '') + '</span>' +
     '<span class="title">' + esc((b.title || '').slice(0, 110)) + ((b.title || '').length > 110 ? '…' : '') + '</span>' + mark + flag + (extraRight || '') +
     stagePill(b.status_stage) + '<span class="date">' + esc(b.last_action_at || '') + '</span>';
@@ -287,15 +295,26 @@ function panel(b){
     (b.source_url && b.source_url !== b.url ? ' &middot; <a href="' + esc(b.source_url) + '" target="_blank" rel="noopener">Official page</a>' : ''));
   h += '<div class="meta">' + meta.join('<br>') + '</div>';
   if (b.match_terms) h += '<div class="why">Why it surfaced: ' + esc(b.match_terms.slice(0, 240)) + '</div>';
-  if (b.notes) h += '<div class="notes">' + esc(b.notes) + (b.reviewed_by ? '<br><i>' + esc(b.reviewed_by) + ', ' + esc((b.reviewed_at || '').slice(0, 10)) + '</i>' : '') + '</div>';
+  if (b.notes) h += '<div class="notes"><b>Committee note</b><br>' + esc(b.notes) + (b.reviewed_by ? '<br><i>' + esc(b.reviewed_by) + ', ' + esc((b.reviewed_at || '').slice(0, 10)) + '</i>' : '') + '</div>';
+  var mine = marks[b.id];
+  if (mine && mine.note) h += '<div class="mynote"><b>My note</b> (only you see this)<br>' + esc(mine.note) + '</div>';
   h += '<div id="more-' + b.id + '"><span class="empty">Loading history</span></div>';
   p.innerHTML = h;
+  // private: this member's own list and note
+  var me = el('div', 'actions');
+  me.appendChild(el('span', 'lbl', 'Mine'));
+  if (!marksReady) me.appendChild(el('span', 'empty', 'Private lists are not set up yet.'));
+  else if (mine) me.appendChild(btn('Remove from my list', 'btn', function(){ setMine(b, false); }));
+  else me.appendChild(btn('Add to my list', 'btn btn-primary', function(){ setMine(b, true); }));
+  if (marksReady) me.appendChild(btn(mine && mine.note ? 'Edit my note' : 'My note', 'btn btn-link', function(){ myNoteBox(p, b); }));
+  p.appendChild(me);
+  // shared: committee-level decisions everyone sees
   var act = el('div', 'actions');
-  if (b.review_status !== 'watch') act.appendChild(btn('Watch', 'btn btn-amber', function(){ setReview(b, 'watch'); }));
+  act.appendChild(el('span', 'lbl', 'Committee'));
   if (b.review_status !== 'relevant') act.appendChild(btn('Relevant', 'btn btn-green', function(){ setReview(b, 'relevant'); }));
   if (b.review_status !== 'dismissed') act.appendChild(btn('Dismiss', 'btn btn-red', function(){ setReview(b, 'dismissed'); }));
-  if (b.review_status !== 'new') act.appendChild(btn('Clear mark', 'btn', function(){ setReview(b, 'new'); }));
-  act.appendChild(btn(b.notes ? 'Edit note' : 'Add note', 'btn btn-link', function(){ noteBox(p, b); }));
+  if (b.review_status !== 'new') act.appendChild(btn('Clear', 'btn', function(){ setReview(b, 'new'); }));
+  act.appendChild(btn(b.notes ? 'Edit committee note' : 'Committee note', 'btn btn-link', function(){ noteBox(p, b); }));
   p.appendChild(act);
   p.onclick = function(e){ e.stopPropagation(); };
   loadMore(b);
@@ -347,6 +366,36 @@ function noteBox(p, b){
       if (r.error) alert('Save failed: ' + r.error.message);
       else { b.notes = body.notes; b.reviewed_by = user; b.reviewed_at = body.reviewed_at; render(); }
     });
+  });
+  p.appendChild(ta); p.appendChild(save);
+}
+
+function setMine(b, add){
+  if (add){
+    sb.from('leg_marks').upsert({user_id: uid, bill_id: b.id, mark: 'watch', updated_at: new Date().toISOString()}, {onConflict: 'user_id,bill_id'})
+      .select('id,bill_id,mark,note').then(function(r){
+        if (r.error){ alert('Could not add: ' + r.error.message); return; }
+        marks[b.id] = (r.data && r.data[0]) || {bill_id: b.id, mark: 'watch'}; render();
+      });
+  } else {
+    sb.from('leg_marks').delete().eq('bill_id', b.id).then(function(r){
+      if (r.error){ alert('Could not remove: ' + r.error.message); return; }
+      delete marks[b.id]; render();
+    });
+  }
+}
+
+function myNoteBox(p, b){
+  if (p.querySelector('textarea.mynote-edit')) return;
+  var ta = el('textarea', 'note mynote-edit'); ta.value = (marks[b.id] && marks[b.id].note) || ''; ta.placeholder = 'Private note, visible only to you';
+  ta.onclick = function(e){ e.stopPropagation(); };
+  var save = btn('Save my note', 'btn btn-primary', function(){
+    var note = ta.value.trim() || null;
+    sb.from('leg_marks').upsert({user_id: uid, bill_id: b.id, mark: 'watch', note: note, updated_at: new Date().toISOString()}, {onConflict: 'user_id,bill_id'})
+      .select('id,bill_id,mark,note').then(function(r){
+        if (r.error){ alert('Save failed: ' + r.error.message); return; }
+        marks[b.id] = (r.data && r.data[0]) || {bill_id: b.id, mark: 'watch', note: note}; render();
+      });
   });
   p.appendChild(ta); p.appendChild(save);
 }
@@ -463,10 +512,13 @@ function renderRules(list){
 }
 
 function renderWatch(list){
-  var rows = bills.filter(function(b){ return (b.review_status === 'watch' || b.review_status === 'relevant') && passes(b); }).sort(activeSort);
-  list.appendChild(el('div', 'lead', 'Everything a member marked Watch or Relevant, any topic, any stage.'));
-  list.appendChild(section('Relevant', rows.filter(function(b){ return b.review_status === 'relevant'; }), {empty: 'Nothing marked Relevant yet.'}));
-  list.appendChild(section('Watching', rows.filter(function(b){ return b.review_status === 'watch'; }), {empty: 'Nothing marked Watch yet.'}));
+  list.appendChild(el('div', 'lead', 'My list is yours alone. Committee marks are shared with every member.'));
+  var mine = bills.filter(function(b){ return marks[b.id] && passes(b); }).sort(activeSort);
+  list.appendChild(section('My list', mine, {empty: marksReady ? 'Nothing on your list yet. Open any bill and click Add to my list.' : 'Private lists are not set up yet.'}));
+  var rel = bills.filter(function(b){ return b.review_status === 'relevant' && passes(b); }).sort(activeSort);
+  list.appendChild(section('Committee: relevant', rel, {empty: 'Nothing marked Relevant by the committee yet.'}));
+  var legacy = bills.filter(function(b){ return b.review_status === 'watch' && passes(b); }).sort(activeSort);
+  if (legacy.length) list.appendChild(section('Committee: watching', legacy, {}));
 }
 
 function renderArchive(list){
@@ -480,8 +532,8 @@ function renderArchive(list){
   var set = ARCHIVE_SETS.filter(function(s){ return s.key === archiveSet; })[0];
   var rows = bills.filter(function(b){ return set.test(b) && passes(b); }).sort(dateSort);
   var lead = {dead: 'Bills whose session ended without passage. Kept for reference; many come back next session.',
-    vetoed: 'Vetoed bills.', dismissed: 'Set aside by a member. Open one and use Clear mark to bring it back.',
-    noise: 'Hidden by a keyword rule. The rule and word that fired are in the row detail. If one is wrong, Clear mark and tell Jeffrey.',
+    vetoed: 'Vetoed bills.', dismissed: 'Set aside by a member for the whole committee. Open one and use Clear to bring it back.',
+    noise: 'Hidden by a keyword rule. The rule and word that fired are in the row detail. If one is wrong, Clear and tell Jeffrey.',
     ai_general: 'AI bills with no music or performer angle, kept for reference.',
     music_policy: 'Music-industry actions without an AI angle: rate proceedings, licensing, the MLC.'}[archiveSet];
   list.appendChild(el('div', 'lead', esc(lead)));
@@ -514,7 +566,7 @@ function counts(){
     active: live.filter(isActive).length,
     enacted: live.filter(function(b){ return b.status_stage === 'enacted' || b.status_stage === 'final'; }).length,
     rules: live.filter(function(b){ return b.source === 'federal_register'; }).length,
-    watch: bills.filter(function(b){ return b.review_status === 'watch' || b.review_status === 'relevant'; }).length,
+    watch: Object.keys(marks).length + bills.filter(function(b){ return b.review_status === 'relevant' || b.review_status === 'watch'; }).length,
     archive: null
   };
 }
@@ -534,6 +586,7 @@ function drawTabs(){
 function show(session){
   var loggedIn = !!session;
   user = loggedIn ? (session.user.email || session.user.id) : null;
+  uid = loggedIn ? session.user.id : null;
   $('loginScreen').style.display = loggedIn ? 'none' : 'flex';
   $('app').style.display = loggedIn ? 'block' : 'none';
   if (loggedIn) loadData();
