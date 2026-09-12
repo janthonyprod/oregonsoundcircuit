@@ -74,9 +74,11 @@ h2 select{font:inherit;font-size:14px;font-weight:500;text-transform:none;letter
 .feed .what{grid-column:2;min-width:0}
 .feed .what .act{display:block;font-size:14.5px;color:var(--text-secondary)}
 .feed .stage{grid-column:3}
-.states{display:flex;flex-wrap:wrap;gap:6px 14px;padding:10px 14px;font-size:15px;border-top:1px solid var(--rule)}
+.states{display:flex;flex-wrap:wrap;gap:4px 6px;padding:10px 12px;font-size:15px;border-top:1px solid var(--rule)}
 .states:first-child{border-top:none}
-.states span{cursor:pointer}
+.states span{cursor:pointer;padding:2px 8px;border-radius:14px;border:1px solid transparent}
+.states span:hover{border-color:var(--rule)}
+.states span.active{border-color:var(--accent);background:#eef3f8}
 .states span b{font-weight:600}
 .panel{padding:12px 14px 14px;border-top:1px solid var(--rule);background:#f4f6f9;font-size:15px}
 .panel .actions{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:0 0 8px}
@@ -206,6 +208,7 @@ var ARCHIVE_SETS = [
   {key:'music_policy', label:'Music industry, no AI', test:function(b){ return b.lane === 'music_policy' && isLive(b); }}
 ];
 var view = 'brief', topic = 'all', query = '', archiveSet = 'dead', windowDays = 30, user = null, uid = null;
+var briefState = null, stateSel = {};  // which state is opened on the Brief, and per list on Active and Enacted
 var marks = {}, marksReady = true;  // this member's private list: bill_id -> {id, note}
 var bills = [], billById = {}, events = [], eventsByBill = {}, lastRun = null, open = {}, showStates = {}, groupOf = {};
 
@@ -685,7 +688,26 @@ function oregonBlock(or){
   return g;
 }
 
-// every other state behind one show link, grouped by state
+// a row of state chips with counts; clicking one calls onPick(state)
+function stateChips(rows, selected, onPick, allLabel){
+  var counts = {};
+  rows.forEach(function(b){ counts[b.jurisdiction] = (counts[b.jurisdiction] || 0) + 1; });
+  var names = Object.keys(counts).sort(function(a, b){ return counts[b] - counts[a] || (a < b ? -1 : 1); });
+  var bar = el('div', 'states');
+  if (allLabel){
+    var all = el('span', selected ? null : 'active', esc(allLabel) + ' <b>' + collapse(rows).length + '</b>');
+    all.onclick = function(){ onPick(null); };
+    bar.appendChild(all);
+  }
+  names.forEach(function(s){
+    var c = el('span', s === selected ? 'active' : null, jurPill(s) + '<b>' + collapse(rows.filter(function(b){ return b.jurisdiction === s; })).length + '</b>');
+    c.onclick = function(){ onPick(s === selected ? null : s); };
+    bar.appendChild(c);
+  });
+  return bar;
+}
+
+// every other state behind one show link, then chips to pick one state
 function otherStates(list, st, key, sorter, rowOpts){
   var expanded = showStates[key] || !!query;
   var h = el('h2', null, 'Other states <span class="n">' + collapse(st).length + '</span>' +
@@ -695,8 +717,16 @@ function otherStates(list, st, key, sorter, rowOpts){
   list.appendChild(h);
   if (!st.length) list.appendChild(el('div', 'empty', 'No other-state items.'));
   else if (expanded){
-    st.sort(function(a, b){ return a.jurisdiction < b.jurisdiction ? -1 : a.jurisdiction > b.jurisdiction ? 1 : sorter(a, b); });
-    list.appendChild(listRows(st, {rowOpts: rowOpts}));
+    var sel = stateSel[key] || null;
+    var g = el('div', 'group');
+    g.appendChild(stateChips(st, sel, function(s){ stateSel[key] = s; render(); }, 'All states'));
+    var rows = sel ? st.filter(function(b){ return b.jurisdiction === sel; }) : st;
+    rows.sort(function(a, b){ return a.jurisdiction < b.jurisdiction ? -1 : a.jurisdiction > b.jurisdiction ? 1 : sorter(a, b); });
+    collapse(rows).forEach(function(it){
+      g.appendChild(row(it.b, merge({members: it.members}, rowOpts ? rowOpts(it.b) : null)));
+      if (open[it.b.id]) g.appendChild(panel(it.b, it.members));
+    });
+    list.appendChild(g);
   }
 }
 
@@ -751,17 +781,17 @@ function renderBrief(list){
   var usN = collapse(us).length;
   list.appendChild(section('Federal', us, {limit: 8, empty: 'Nothing federal.', more: usN > 8 ? 'All ' + usN + ' in Active' : null, onMore: function(){ view = 'active'; }}));
 
-  // 6. other states, compact
+  // 6. other states: chips with counts, click one to open its bills right here
   list.appendChild(heading('Other states', stateNames.length + ' with living bills', {more: 'Open Active', onMore: function(){ view = 'active'; showStates['active'] = true; }}));
   g = el('div', 'group');
-  var st = el('div', 'states');
-  if (!stateNames.length) st.appendChild(el('span', 'empty', 'No other-state bills alive on these topics.'));
-  stateNames.forEach(function(s){
-    var c = el('span', null, jurPill(s) + '<b>' + states[s] + '</b>');
-    c.onclick = function(){ goto('active', function(){ showStates['active'] = true; }); };
-    st.appendChild(c);
-  });
-  g.appendChild(st);
+  var others = living.filter(function(b){ return b.jurisdiction !== 'US' && b.jurisdiction !== 'OR'; });
+  if (!others.length) g.appendChild(el('div', 'note', 'No other-state bills alive on these topics.'));
+  else g.appendChild(stateChips(others, briefState, function(s){ briefState = s; render(); }, null));
+  if (briefState && states[briefState]){
+    var srows = others.filter(function(b){ return b.jurisdiction === briefState; }).sort(rankSort);
+    g.appendChild(el('div', 'note', '<b>' + esc(jurName(briefState)) + '</b><span class="n">' + collapse(srows).length + ' living bills, closest to law first</span>'));
+    collapse(srows).forEach(function(it){ g.appendChild(row(it.b, {members: it.members})); if (open[it.b.id]) g.appendChild(panel(it.b, it.members)); });
+  }
   var ahead = living.filter(function(b){ return b.jurisdiction !== 'US' && b.jurisdiction !== 'OR' && (b.status_stage === 'passed_chamber' || b.status_stage === 'floor'); }).sort(rankSort);
   if (ahead.length){
     g.appendChild(el('div', 'note', '<b>Past a chamber vote or on a floor</b><span class="n">' + collapse(ahead).length + '</span>'));
