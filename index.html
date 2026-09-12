@@ -194,7 +194,7 @@ var VIEWS = [
   {key:'brief', label:'Brief'},
   {key:'active', label:'Active'},
   {key:'enacted', label:'Enacted'},
-  {key:'mine', label:'My list'},
+  {key:'mine', label:'Watchlist'},
   {key:'archive', label:'Archive'}
 ];
 var ARCHIVE_SETS = [
@@ -322,10 +322,23 @@ function termsOf(b){
 // otherwise the matched terms, otherwise the official description
 function blurbOf(b){
   var ov = overviewOf(b.description, 210);
-  if (ov && !ov.official) return esc(ov.text);
+  if (ov && !ov.official && !sameStart(ov.text, b.title)) return esc(ov.text);
   var terms = termsOf(b);
   if (terms.length) return '<span class="why">Matched: ' + esc(terms.join(', ')) + '</span>';
-  return ov ? esc(ov.text) : '';
+  return ov && !sameStart(ov.text, b.title) ? esc(ov.text) : '';
+}
+// some states file the summary sentence as the title; do not print it twice
+function sameStart(a, b){
+  a = (a || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+  b = (b || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+  var n = Math.min(60, a.length, b.length);
+  return n > 30 && a.slice(0, n) === b.slice(0, n);
+}
+// when the title is the summary, let the row title run longer instead of clipping it
+function rowTitle(b){
+  var ov = overviewOf(b.description, 210);
+  if (b.jurisdiction !== 'US' && ov && !ov.official && sameStart(ov.text, b.title)) return ov.text;
+  return shortTitle(b);
 }
 // Oregon bills arrive from both OLIS and LegiScan; keep the OLIS copy.
 function dedupe(rows){
@@ -444,7 +457,7 @@ function row(b, o){
   var blurb = o.blurb != null ? o.blurb : blurbOf(b);
   if (blurb) lead.push(blurb);
   r.innerHTML = '<span class="num">' + jurPill(b.jurisdiction) + esc(b.bill_number || '') + '</span>' +
-    '<span class="title">' + esc(shortTitle(b)) + tags + '</span>' +
+    '<span class="title">' + esc(rowTitle(b)) + tags + '</span>' +
     stagePill(b.status_stage, o.stageLabel) +
     '<span class="date">' + esc(fmt(o.date || b.last_action_at)) + '</span>' +
     (lead.length ? '<span class="blurb">' + lead.join(' · ') + '</span>' : '');
@@ -784,13 +797,13 @@ function renderEnacted(list){
 }
 
 function renderMine(list){
-  list.appendChild(el('div', 'lead', 'My list is yours alone. Committee marks are shared with every member.'));
+  list.appendChild(el('div', 'lead', 'Two lists. My list is private to you, built with Add to my list. The committee list is shared with every member, built with the Relevant button. A bill marked both ways appears in both.'));
   var mine = bills.filter(function(b){ return marks[b.id] && passes(b); }).sort(rankSort);
-  list.appendChild(section('My list', mine, {nogroup: true, empty: marksReady ? 'Nothing on your list yet. Open any bill and click Add to my list.' : 'Private lists are not set up yet.'}));
+  list.appendChild(section('My list (private)', mine, {nogroup: true, empty: marksReady ? 'Nothing on your list yet. Open any bill and click Add to my list.' : 'Private lists are not set up yet.'}));
   var rel = bills.filter(function(b){ return b.review_status === 'relevant' && passes(b); }).sort(rankSort);
-  list.appendChild(section('Committee: relevant', rel, {nogroup: true, empty: 'Nothing marked Relevant by the committee yet.'}));
+  list.appendChild(section('Committee: relevant (shared)', rel, {nogroup: true, empty: 'Nothing marked Relevant by the committee yet.'}));
   var legacy = bills.filter(function(b){ return b.review_status === 'watch' && passes(b); }).sort(rankSort);
-  if (legacy.length) list.appendChild(section('Committee: watching', legacy, {nogroup: true}));
+  if (legacy.length) list.appendChild(section('Committee: watching (shared)', legacy, {nogroup: true}));
 }
 
 function renderArchive(list){
@@ -837,7 +850,7 @@ function counts(){
     brief: null,
     active: collapse(live.filter(isActive)).length,
     enacted: collapse(live.filter(isEnacted)).length,
-    mine: Object.keys(marks).length + bills.filter(function(b){ return b.review_status === 'relevant' || b.review_status === 'watch'; }).length,
+    mine: bills.filter(function(b){ return marks[b.id] || b.review_status === 'relevant' || b.review_status === 'watch'; }).length,
     archive: null
   };
 }
