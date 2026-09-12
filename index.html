@@ -60,6 +60,9 @@ h2 .toggle{font-size:12px;font-weight:500;text-transform:none;letter-spacing:0;c
 .mark.watch{background:#fff3d6;border-color:#f0d9a0;color:#8a5a00}.mark.relevant{background:#def7e6;border-color:#b7e4c4;color:#0a7d38}
 .panel{padding:10px 14px 12px 14px;border-top:1px solid var(--rule);background:#f4f6f9;font-size:13px}
 .panel .full{font-weight:600;margin-bottom:4px}
+.panel .ov{font-size:13.5px;color:var(--text);margin:4px 0 8px;line-height:1.5}
+.panel .ov small{display:block;font-size:11px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
+.panel .more{display:none}
 .panel .meta{color:var(--text-secondary);margin-bottom:6px}
 .panel .why{color:var(--text-tertiary);font-size:12px;margin-bottom:6px}
 .panel p{color:var(--text-secondary);white-space:pre-wrap;margin:6px 0;max-height:220px;overflow:auto}
@@ -155,6 +158,48 @@ function btn(t, cls, fn){ var b = document.createElement('button'); b.className 
 function el(tag, cls, html){ var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
 function stagePill(s){ return '<span class="stage ' + (STAGE_CLASS[s] || '') + '">' + esc(STAGE_LABEL[s] || s || 'Detail pending') + '</span>'; }
 function jurPill(j){ return '<span class="jur ' + esc(j) + '">' + esc(j) + '</span>'; }
+// Two-sentence overview from the official summary already stored: the
+// Oregon digest line, the CRS summary for federal bills, the agency abstract
+// for rulemaking. Nothing is generated.
+function sentencesOf(text){
+  // break only on . ! ? followed by whitespace and a capital, quote or bracket;
+  // decimals (22.6.1), e.g., and common abbreviations stay intact
+  var t = text.replace(/\b(e\.g|i\.e|U\.S|No|Sec|Secs|Ch|Rep|Sen|Dept|St|Mr|Ms|Dr|Inc|Ltd|Co|vs|etc|Art|Div|Subd|Para|Pub|Stat)\.(?=\s)/g, function(m){ return m.replace(/\./g, '․'); });
+  var out = [], start = 0;
+  for (var i = 0; i < t.length; i++){
+    var ch = t.charAt(i);
+    if (ch !== '.' && ch !== '!' && ch !== '?') continue;
+    var j = i + 1;
+    while (j < t.length && /[)"'\]]/.test(t.charAt(j))) j++;
+    if (j < t.length && !/\s/.test(t.charAt(j))) continue;
+    var k = j;
+    while (k < t.length && /\s/.test(t.charAt(k))) k++;
+    if (k < t.length && !/[A-Z"(\[]/.test(t.charAt(k))) continue;
+    out.push(t.slice(start, j).trim());
+    start = k; i = k - 1;
+  }
+  if (start < t.length) out.push(t.slice(start).trim());
+  return out.map(function(x){ return x.replace(/․/g, '.'); }).filter(Boolean);
+}
+
+function overviewOf(desc){
+  if (!desc) return null;
+  var t = desc.replace(/\(Flesch Readability Score:[^)]*\)\.?/g, '').replace(/^\s*Digest:\s*/i, '');
+  var lines = t.split(/\n+/).map(function(x){ return x.trim(); }).filter(Boolean);
+  if (lines.length > 1 && lines[0].length < 220 && !/[.!?]$/.test(lines[0])) lines.shift();
+  var text = lines.join(' ').replace(/\s+/g, ' ').trim();
+  if (!text) return null;
+  var sentences = sentencesOf(text);
+  var out = '';
+  for (var i = 0; i < sentences.length && i < 2; i++){
+    if (out && out.length >= 160) break;
+    out += (out ? ' ' : '') + sentences[i];
+  }
+  if (out.length > 340) out = out.slice(0, 337).replace(/\s+\S*$/, '') + '…';
+  var label = /^(an act\b|relating to\b|a bill\b|to amend\b|amends\b|an ordinance|a resolution|a joint resolution|concerning\b)/i.test(out) ? 'Official description' : 'Overview';
+  return {label: label, text: out, full: text};
+}
+
 function jurName(j){ return j === 'US' ? 'Federal' : j === 'OR' ? 'Oregon' : j; }
 function isTopic(b){ return TOPICS.indexOf(b.lane) >= 0; }
 function isLive(b){ return LIVE.indexOf(b.review_status) >= 0; }
@@ -223,6 +268,7 @@ function row(b, extraRight){
 function panel(b){
   var p = el('div', 'panel');
   var h = '<div class="full">' + jurPill(b.jurisdiction) + esc(b.bill_number || '') + ' ' + esc(b.title) + '</div>';
+  h += '<div class="ov" id="ov-' + b.id + '"><small>Overview</small><span class="empty" style="padding:0">Loading</span></div>';
   var meta = [];
   if (b.last_action_at || b.last_action) meta.push('<b>Last action</b> ' + esc(b.last_action_at || '') + ' ' + esc(b.last_action || ''));
   if (b.sponsor_summary) meta.push('<b>Sponsors</b> ' + esc(b.sponsor_summary));
@@ -237,7 +283,7 @@ function panel(b){
   h += '<div class="meta">' + meta.join('<br>') + '</div>';
   if (b.match_terms) h += '<div class="why">Why it surfaced: ' + esc(b.match_terms.slice(0, 240)) + '</div>';
   if (b.notes) h += '<div class="notes">' + esc(b.notes) + (b.reviewed_by ? '<br><i>' + esc(b.reviewed_by) + ', ' + esc((b.reviewed_at || '').slice(0, 10)) + '</i>' : '') + '</div>';
-  h += '<div id="more-' + b.id + '"><span class="empty">Loading summary and history</span></div>';
+  h += '<div id="more-' + b.id + '"><span class="empty">Loading history</span></div>';
   p.innerHTML = h;
   var act = el('div', 'actions');
   if (b.review_status !== 'watch') act.appendChild(btn('Watch', 'btn btn-amber', function(){ setReview(b, 'watch'); }));
@@ -257,7 +303,15 @@ function loadMore(b){
       var d = $('more-' + b.id); if (!d) return;
       if (r.error){ d.innerHTML = '<span class="empty">' + esc(r.error.message) + '</span>'; return; }
       var x = r.data, h = '';
-      if (x.description) h += '<p>' + esc(x.description.slice(0, 4000)) + '</p>';
+      var ov = overviewOf(x.description), ovEl = $('ov-' + b.id);
+      if (ovEl){
+        if (ov) ovEl.innerHTML = '<small>' + ov.label + '</small>' + esc(ov.text) +
+          (ov.full.length > ov.text.length + 20 ? ' <a href="#" class="showfull">Full summary</a>' : '');
+        else ovEl.innerHTML = '<small>Overview</small><span class="empty" style="padding:0">No summary from the source yet. The title and the bill text link are all it has published.</span>';
+        var sf = ovEl.querySelector('.showfull');
+        if (sf) sf.onclick = function(e){ e.preventDefault(); e.stopPropagation(); var m = $('full-' + b.id); if (m){ m.style.display = m.style.display === 'block' ? 'none' : 'block'; sf.textContent = m.style.display === 'block' ? 'Hide summary' : 'Full summary'; } };
+      }
+      if (ov && ov.full.length > ov.text.length + 20) h += '<p class="more" id="full-' + b.id + '">' + esc(ov.full.slice(0, 6000)) + '</p>';
       var bits = [];
       if (x.current_location) bits.push(esc(x.current_location));
       if (x.subjects && x.subjects.length) bits.push('Subjects: ' + esc(x.subjects.join(', ')));
