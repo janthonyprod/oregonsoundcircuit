@@ -190,8 +190,13 @@ function overviewOf(desc){
   var text = lines.join(' ').replace(/\s+/g, ' ').trim();
   if (!text) return null;
   var sentences = sentencesOf(text);
+  // digests explain existing law first; lead with what the bill itself does
+  var start = 0;
+  for (var s = 0; s < sentences.length; s++){
+    if (/^This (bill|act|measure|resolution)\b/.test(sentences[s])){ start = s; break; }
+  }
   var out = '';
-  for (var i = 0; i < sentences.length && i < 2; i++){
+  for (var i = start; i < sentences.length && i < start + 2; i++){
     if (out && out.length >= 160) break;
     out += (out ? ' ' : '') + sentences[i];
   }
