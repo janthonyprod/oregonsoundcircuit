@@ -19,7 +19,9 @@
   ],
   "redirects": [
     { "source": "/tracker", "destination": "/", "permanent": false },
-    { "source": "/tracker/(.*)", "destination": "/", "permanent": false },
-    { "source": "/venues/(.*)", "destination": "/venues", "permanent": false }
+    { "source": "/tracker/(.*)", "destination": "/", "permanent": false }
+  ],
+  "rewrites": [
+    { "source": "/venues/:slug", "destination": "/venues/index.html" }
   ]
 }
