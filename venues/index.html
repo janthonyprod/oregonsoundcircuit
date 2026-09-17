@@ -6,7 +6,7 @@
 <meta name="robots" content="index, follow">
 <meta name="description" content="A growing directory of live music venues across Oregon: booking contacts, venue details, and information on openings and closures. Built to help musicians find places to play, venue operators connect, and music advocates identify where support is needed.">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<title>Oregon Venue Register</title>
+<title>Oregon Venue Directory</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -174,7 +174,7 @@ select,input,textarea,button{font:inherit;color:inherit}
 <body>
 
 <header class="top">
-  <div class="brand"><span class="wordmark">Oregon Sound Circuit</span><span class="product">Venue Register</span></div>
+  <div class="brand"><span class="wordmark">Oregon Sound Circuit</span><span class="product">Venue Directory</span></div>
   <nav class="nav" id="nav" aria-label="Site"></nav>
 </header>
 
@@ -356,7 +356,7 @@ async function fetchAll(table, cols, mod){
   }
 }
 async function load(){
-  $('results').innerHTML = '<p class="empty">Loading the register...</p>';
+  $('results').innerHTML = '<p class="empty">Loading the directory...</p>';
   var cols = editable() ? EDITOR_COLS : PUBLIC_COLS;
   var ecols = editable() ? EDITOR_EVENT_COLS : PUBLIC_EVENT_COLS;
   try {
@@ -370,7 +370,7 @@ async function load(){
       (await fetchAll('venue_notes', ['id','venue_id','note','created_at','created_by'])).forEach(function(n){ (notes[n.venue_id] = notes[n.venue_id] || []).push(n); });
     }
   } catch (e){
-    $('results').innerHTML = '<p class="empty">Could not load the register: ' + esc(e.message || e) + '</p>';
+    $('results').innerHTML = '<p class="empty">Could not load the directory: ' + esc(e.message || e) + '</p>';
     return;
   }
   venues.sort(function(a, b){ return a.name.localeCompare(b.name); });
@@ -383,7 +383,7 @@ function render(){ renderNav(); renderFigures(); renderRail(); renderResults(); 
 function navItem(action, label, cls){ return '<button data-nav="' + action + '"' + (cls ? ' class="' + cls + '"' : '') + '>' + label + '</button>'; }
 function renderNav(){
   var drafts = venues.filter(function(v){ return !v.published; }).length;
-  var h = navItem('register', 'Register', view === 'register' ? 'current' : '') + navItem('closures', 'Closures');
+  var h = navItem('register', 'Directory', view === 'register' ? 'current' : '') + navItem('closures', 'Closures');
   if (editable()) h += navItem('drafts', 'Drafts <span class="tnum">' + drafts + '</span>', view === 'drafts' ? 'current' : '');
   h += navItem('method', 'Methodology') + navItem('add', 'Add a venue');
   h += editable() ? '<span class="who" title="' + esc(user.email) + '">' + esc(user.email.split('@')[0]) + '</span>' + navItem('signout', 'Sign out') : navItem('login', 'Editor sign in');
@@ -463,15 +463,15 @@ function renderResults(){
   else h += '<p class="empty">No open venues match those filters. <span>Try widening capacity.</span></p>';
   if (view === 'register'){
     var closed = venues.filter(inClosed).sort(byClosure);
-    h += '<section class="closed" id="closed"><div class="closed-h"><h2>Closed</h2><div class="note">Rooms that have shut since 2019. Kept on the register because the loss is the record.</div></div><div class="ledger">' +
+    h += '<section class="closed" id="closed"><div class="closed-h"><h2>Closed</h2><div class="note">Rooms that have shut since 2019. Kept in the directory because the loss is the record.</div></div><div class="ledger">' +
       (closed.length ? closed.map(ledgerRow).join('') : '<p class="empty">No closures recorded yet. Editors add them from a venue’s listing.</p>') + '</div></section>';
   }
   $('results').innerHTML = h;
 }
 function renderFoot(){
-  $('foot').innerHTML = 'Oregon Venue Register, a project of Oregon Sound Circuit. Listings are maintained by volunteer editors and marked when verified; ' +
+  $('foot').innerHTML = 'Oregon Venue Directory, a project of Oregon Sound Circuit. Listings are maintained by volunteer editors and marked when verified; ' +
     'seed listings include data from <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a> (ODbL). ' +
-    '<button data-nav="method">Methodology</button> · <button data-nav="csv">Download the open register as CSV</button>';
+    '<button data-nav="method">Methodology</button> · <button data-nav="csv">Download the open venues as CSV</button>';
 }
 
 // ------------------------------------------------------------------ sheet
@@ -600,14 +600,14 @@ function loginHtml(note){
     '<div><button class="btn btn-ink" id="loginBtn">Sign in</button><div class="err" id="loginErr" hidden>Sign-in failed. Check the email and password.</div></div></div>';
 }
 function methodHtml(){
-  return '<div class="sheet-head"><div><div class="eyebrow">Methodology</div><h2 id="sheetTitle">How the register is kept</h2></div>' +
+  return '<div class="sheet-head"><div><div class="eyebrow">Methodology</div><h2 id="sheetTitle">How the directory is kept</h2></div>' +
     '<button class="x" data-close="1" aria-label="Close">×</button></div><div class="prose">' +
     '<p><b>What counts.</b> Any room in Oregon and the Portland area that books live music: dedicated venues, bars and clubs with stages, theaters and halls, amphitheaters, DIY and all-ages spaces, breweries and restaurants with regular music.</p>' +
     '<p><b>Where listings come from.</b> The first pass was seeded from OpenStreetMap (ODbL) and from research shared by regional music organizations. Editors then check each room against the venue itself: its website, its calendar, a phone call, a visit.</p>' +
-    '<p><b>Open, verified, closed.</b> A room is listed as open until a closure is recorded. “Verified” means an editor confirmed the listing on the date shown; unverified rooms carry a marker on their card. A closure is recorded with a date and, where known, a reason and a source. Closed rooms stay on the register in their own ledger because the loss is the record.</p>' +
+    '<p><b>Open, verified, closed.</b> A room is listed as open until a closure is recorded. “Verified” means an editor confirmed the listing on the date shown; unverified rooms carry a marker on their card. A closure is recorded with a date and, where known, a reason and a source. Closed rooms stay in the directory in their own ledger because the loss is the record.</p>' +
     '<p><b>The numbers.</b> Open counts published rooms not recorded as closed. Closed since 2019 counts closures dated 2019 or later. All ages counts open rooms whose policy is all ages. Capacity lost sums the capacity of rooms closed since 2019.</p>' +
     '<p><b>Corrections.</b> Editors sign in to fix a listing or record a closure. If you run a room and something here is wrong, use the corrections link on the listing.</p>' +
-    '<p><button class="btn" data-nav="csv">Download the open register as CSV</button></p></div>';
+    '<p><button class="btn" data-nav="csv">Download the open venues as CSV</button></p></div>';
 }
 function renderSheet(){
   var scrim = $('scrim'), box = $('sheet');
@@ -629,7 +629,7 @@ function downloadCsv(){
   var cols = PUBLIC_COLS.filter(function(c){ return ['id','osm_id','published','created_at','updated_at'].indexOf(c) < 0; });
   var lines = [cols.join(',')].concat(rows.map(function(v){ return cols.map(function(c){ var s = v[c] == null ? '' : String(v[c]); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }).join(','); }));
   var blob = new Blob([lines.join('\n')], {type: 'text/csv'});
-  var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'oregon-venue-register-' + TODAY + '.csv'; a.click();
+  var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'oregon-venue-directory-' + TODAY + '.csv'; a.click();
 }
 
 // ------------------------------------------------------------------ writes (editors)
@@ -704,7 +704,7 @@ function nav(action){
   else if (action === 'closures'){ view = 'register'; sheet = null; render(); var c = $('closed'); if (c) c.scrollIntoView({block:'start'}); }
   else if (action === 'drafts'){ view = 'drafts'; sheet = null; render(); window.scrollTo(0, 0); }
   else if (action === 'method'){ openSheet({mode:'method'}); }
-  else if (action === 'add'){ openSheet(editable() ? {mode:'add'} : {mode:'login', note:'Adding a venue requires an editor login. Editors are members of the coalition that maintains this register.'}); }
+  else if (action === 'add'){ openSheet(editable() ? {mode:'add'} : {mode:'login', note:'Adding a venue requires an editor login. Editors are members of the coalition that maintains this directory.'}); }
   else if (action === 'correct'){ openSheet(editable() ? sheet : {mode:'login', note:'Corrections are made by editors. Sign in to fix this listing, or ask an editor to.'}); }
   else if (action === 'login'){ openSheet({mode:'login'}); }
   else if (action === 'csv'){ downloadCsv(); }
