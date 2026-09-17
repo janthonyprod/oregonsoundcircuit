@@ -33,9 +33,10 @@ select,input,textarea,button{font:inherit;color:inherit}
 .nav .current{color:var(--flood)}
 .nav .who{opacity:.55;cursor:default;text-transform:none;letter-spacing:.02em}
 /* headline block */
-.hero{padding:34px 26px 26px;border-bottom:3px solid var(--ink)}
-.hero h1{margin:0;font-family:Anton,sans-serif;font-weight:400;font-size:clamp(46px,9vw,110px);line-height:.88;letter-spacing:-.01em;text-transform:uppercase;max-width:14ch;text-wrap:pretty}
-.lead{margin:20px 0 0;font-size:16px;line-height:1.5;max-width:46ch;text-wrap:pretty}
+.hero{padding:26px 26px 22px;border-bottom:3px solid var(--ink)}
+.hero h1{margin:0;font-family:Anton,sans-serif;font-weight:400;font-size:clamp(30px,4.5vw,58px);line-height:.92;letter-spacing:-.01em;text-transform:uppercase;max-width:22ch;text-wrap:pretty}
+.heroline{margin-top:14px;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;opacity:.65}
+.lead{margin:16px 0 0;font-size:16px;line-height:1.5;max-width:52ch;text-wrap:pretty}
 .lead+.lead{margin-top:12px}
 /* census band */
 .census{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));border-bottom:3px solid var(--ink)}
@@ -69,7 +70,7 @@ select,input,textarea,button{font:inherit;color:inherit}
 .results{flex:1 1 540px;min-width:0;padding:22px 26px 70px}
 .bar{display:flex;flex-wrap:wrap;gap:12px;align-items:baseline;justify-content:space-between;font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding-bottom:10px;border-bottom:3px solid var(--ink)}
 .bar .dim{opacity:.55}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(262px,1fr));gap:18px;margin-top:22px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(max(280px,calc(33.333% - 12px)),1fr));gap:18px;margin-top:22px;align-items:start}
 .card{display:flex;flex-direction:column;gap:11px;background:var(--stock);border:2px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 16px 14px;cursor:pointer;color:var(--ink);transition:box-shadow .12s ease}
 .card:hover{box-shadow:6px 6px 0 var(--flood);background:var(--stock);color:var(--ink);border-color:var(--ink)}
 .card:focus-visible,.lrow:focus-visible{outline:3px solid var(--flood);outline-offset:2px}
@@ -77,6 +78,9 @@ select,input,textarea,button{font:inherit;color:inherit}
 .card h3{margin:0;font-family:Anton,sans-serif;font-weight:400;font-size:21px;line-height:1.02;text-transform:uppercase;text-wrap:pretty}
 .cap{font-family:Anton,sans-serif;font-weight:400;font-size:22px;line-height:1;color:var(--flood);font-feature-settings:'tnum' 1;white-space:nowrap}
 .cap.none{font-family:'Spline Sans',system-ui,sans-serif;font-weight:600;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink);opacity:.5;line-height:1.3;text-align:right;white-space:normal;max-width:72px}
+.parent{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.55;margin-bottom:4px}
+.capwrap{text-align:right;flex:0 0 auto}
+.capk{display:block;font-size:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.5;margin-top:3px;white-space:nowrap}
 .loc{margin-top:5px;font-size:11.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;opacity:.65}
 .badge{align-self:flex-start;background:transparent;color:var(--ink);border:2px solid var(--ink);padding:3px 8px;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase}
 .badge.aa{background:var(--flood);color:var(--stock);border-color:var(--flood)}
@@ -86,11 +90,23 @@ select,input,textarea,button{font:inherit;color:inherit}
 .fv.stage{font-weight:400;text-wrap:pretty}
 .empty{margin:34px 0;font-size:15px;font-weight:500}
 .empty span{opacity:.55}
+.sec{margin-top:44px;border-top:3px solid var(--ink);padding-top:12px;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:baseline;justify-content:space-between}
+.sec h2{margin:0;font-family:Anton,sans-serif;font-weight:400;font-size:20px;letter-spacing:.06em;text-transform:uppercase}
+.sec .note{font-size:12px;opacity:.65;max-width:52ch;text-wrap:pretty}
+.tl{margin-top:8px}
+.tl-row{display:grid;grid-template-columns:104px minmax(0,1fr);gap:4px 16px;padding:10px 0;border-bottom:1px solid var(--ink)}
+.tl-when{font-family:Anton,sans-serif;font-weight:400;font-size:15px;text-transform:uppercase;color:var(--flood);font-feature-settings:'tnum' 1}
+.tl-what{font-size:13px;line-height:1.45;overflow-wrap:anywhere}
+.tl-what b{font-weight:600}
+.tl-what .k{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;opacity:.6;margin-right:8px}
+.src{font-size:13px;margin:6px 0 0;line-height:1.45;overflow-wrap:anywhere}
+.src .k{font-size:9.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.5;margin-left:6px}
+.seedlist .lrow{grid-template-columns:minmax(0,1fr) minmax(0,150px) 110px}
 .closed{margin-top:56px}
 .closed-h{background:var(--ink);color:var(--stock);padding:8px 14px;display:flex;flex-wrap:wrap;gap:12px;align-items:baseline;justify-content:space-between}
 .closed h2{margin:0;font-family:Anton,sans-serif;font-weight:400;font-size:22px;letter-spacing:.06em;text-transform:uppercase}
 .closed .note{font-size:12px;max-width:48ch;text-wrap:pretty;opacity:.8}
-.lrow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,132px) 58px 64px;gap:6px 16px;align-items:baseline;padding:11px 0;border:0;border-bottom:1px solid var(--ink);cursor:pointer;color:var(--ink);transition:background-color .12s ease}
+.lrow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,190px) 58px 64px;gap:6px 16px;align-items:baseline;padding:11px 0;border:0;border-bottom:1px solid var(--ink);cursor:pointer;color:var(--ink);transition:background-color .12s ease}
 .lrow:hover{background:var(--stock-hover);color:var(--ink);border-bottom-color:var(--ink)}
 .ln{font-family:Anton,sans-serif;font-weight:400;font-size:18px;text-transform:uppercase;min-width:0;opacity:.8}
 .lc{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;opacity:.55;min-width:0}
@@ -153,7 +169,8 @@ select,input,textarea,button{font:inherit;color:inherit}
   .nav{gap:12px}
   .cell{padding:14px 16px 12px}
   .cell .num{font-size:48px}
-  .lrow{grid-template-columns:minmax(0,1fr) auto;gap:3px 14px}
+  .lrow,.seedlist .lrow{grid-template-columns:minmax(0,1fr) auto;gap:3px 14px}
+  .tl-row{grid-template-columns:1fr}
   .ln{grid-column:1;grid-row:1}.ly{grid-column:2;grid-row:1}.lc{grid-column:1;grid-row:2}.lcap{grid-column:2;grid-row:2}
   .form{grid-template-columns:1fr}
   .sheet{padding:20px 16px 24px;box-shadow:8px 8px 0 var(--flood)}
@@ -171,6 +188,7 @@ select,input,textarea,button{font:inherit;color:inherit}
 <section class="hero">
   <h1><span class="flood">Oregon&rsquo;s</span> Live Music Venue Directory</h1>
   <p class="lead">A growing directory of live music venues across Oregon, with booking contacts, venue details, and information on openings and closures.</p>
+  <div class="heroline" id="heroline"></div>
 </section>
 
 <section class="census" id="figures" aria-label="Counts"></section>
@@ -200,39 +218,59 @@ var $ = function(id){ return document.getElementById(id); };
 var PUBLIC_COLS = ['id','slug','name','aka','kind','status','status_since','opened_year','closed_on','address','city','state','zip',
   'county','neighborhood','lat','lng','capacity','capacity_note','ages','ownership','owner_operator','website','booking_url',
   'booking_email','booking_note','instagram','phone','genres','pay_model','sound_note','notes','sources','osm_id','published',
-  'last_verified_on','created_at','updated_at'];
-var EDITOR_COLS = PUBLIC_COLS.concat(['liquor_license','extra','verified_by','created_by','updated_by']);
-var PUBLIC_EVENT_COLS = ['id','venue_id','occurred_on','kind','detail','source_url','created_at'];
-var EDITOR_EVENT_COLS = PUBLIC_EVENT_COLS.concat(['created_by']);
+  'last_verified_on','created_at','updated_at',
+  'venue_id','region','parent_venue','room_name','capacity_seated','capacity_standing','capacity_type','status_date_precision',
+  'closure_type','successor_venue','researched_on'];
+var EDITOR_COLS = PUBLIC_COLS.concat(['liquor_license','extra','verified_by','created_by','updated_by',
+  'status_confidence','capacity_confidence','ages_confidence','inclusion_basis','source_origin']);
+var PUBLIC_EVENT_COLS = ['id','venue_id','occurred_on','kind','detail','source_url','created_at','date_precision','capacity_at_event','source_title'];
+var EDITOR_EVENT_COLS = PUBLIC_EVENT_COLS.concat(['created_by','confidence']);
+var PUBLIC_EVIDENCE_COLS = ['id','venue_id','field_name','asserted_value','source_url','source_title','publisher','source_type','publication_date','accessed_on','note'];
+var EDITOR_EVIDENCE_COLS = PUBLIC_EVIDENCE_COLS.concat(['confidence']);
 
 var KINDS = {music_venue:'Music venue', bar_club:'Bar or club', theater:'Theater or hall', arena_amphitheater:'Arena or amphitheater',
   event_space:'Event space', arts_center:'Arts center', diy_allages:'DIY or all-ages space', brewery_restaurant:'Brewery or restaurant',
   community_hall:'Community hall', outdoor:'Outdoor', other:'Other', unknown:'Unclassified'};
-var STATUS = {open:'Open', closed:'Closed', temporarily_closed:'Temporarily closed', opening_soon:'Opening soon', for_sale:'For sale', unknown:'Unverified'};
-var AGES = {all_ages:'All ages', '21_plus':'21+', mixed:'Mixed ages', unknown:'Ages unlisted'};
+var STATUS = {open:'Open', seasonal:'Seasonal', temporarily_closed:'Temporarily closed', planned:'Planned', opening_soon:'Planned',
+  for_sale:'For sale', closed:'Closed', ceased_live_music:'Ceased live music', unknown:'Unverified'};
+var CURRENT = ['open', 'seasonal'];
+var PLANNED = ['planned', 'opening_soon'];
+var GONE = ['closed', 'ceased_live_music'];
+var AGES = {all_ages:'All ages', '21_plus':'21+', '18_plus':'18+', minors_with_adult:'Minors with an adult', mixed:'Varies by event', unknown:'Ages not verified'};
 var OWNERSHIP = {independent:'Independent', corporate:'Corporate or chain', nonprofit:'Nonprofit', public:'Public', unknown:'Not recorded'};
-var EVENT_KINDS = {opened:'Opened', closed:'Closed', reopened:'Reopened', temporarily_closed:'Temporarily closed', changed_hands:'Changed hands',
-  renamed:'Renamed', capacity_changed:'Capacity changed', moved:'Moved', for_sale:'Put up for sale', other:'Other'};
+var CAP_TYPE = {advertised_audience:'advertised', reported_estimate:'reported', unknown:''};
+var PRECISION = {day:'Exact date', month:'Month known', year:'Year known', unknown:'Unknown'};
+var REGIONS = ['Portland Metro','Willamette Valley','Central Oregon','North Coast','Central Coast','South Coast','Rogue Valley',
+  'Umpqua Valley','Klamath Basin','Columbia Gorge','Eastern Oregon','Southwest Washington'];
+var EVENT_KINDS = {opened:'Opened', closed:'Closed', reopened:'Reopened', temporarily_closed:'Temporarily closed',
+  ceased_live_music:'Ceased live music', planned_opening:'Planned opening', changed_hands:'Changed hands',
+  renamed:'Renamed', capacity_changed:'Capacity changed', moved:'Relocated', for_sale:'Put up for sale', other:'Other'};
 // adding one of these events also sets the venue's status
-var EVENT_SETS_STATUS = {opened:'open', reopened:'open', closed:'closed', temporarily_closed:'temporarily_closed', for_sale:'for_sale'};
+var EVENT_SETS_STATUS = {opened:'open', reopened:'open', closed:'closed', ceased_live_music:'ceased_live_music',
+  temporarily_closed:'temporarily_closed', planned_opening:'planned', for_sale:'for_sale'};
+var CONF = {verified:'verified', corroborated:'corroborated', provisional:'provisional', conflicting:'conflicting', unknown:'unknown'};
 var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 var BANDS = [
   {key:'any', label:'Any capacity', test:function(){ return true; }},
-  {key:'s', label:'Under 100', test:function(v){ return v.capacity != null && v.capacity < 100; }},
-  {key:'m', label:'100 – 299', test:function(v){ return v.capacity != null && v.capacity >= 100 && v.capacity < 300; }},
-  {key:'l', label:'300 – 999', test:function(v){ return v.capacity != null && v.capacity >= 300 && v.capacity < 1000; }},
-  {key:'xl', label:'1,000 and up', test:function(v){ return v.capacity != null && v.capacity >= 1000; }},
-  {key:'none', label:'Capacity unknown', test:function(v){ return v.capacity == null; }}
+  {key:'s', label:'Under 100', test:function(v){ return capMax(v) != null && capMax(v) < 100; }},
+  {key:'m', label:'100 – 299', test:function(v){ return capMax(v) != null && capMax(v) >= 100 && capMax(v) < 300; }},
+  {key:'l', label:'300 – 999', test:function(v){ return capMax(v) != null && capMax(v) >= 300 && capMax(v) < 1000; }},
+  {key:'xl', label:'1,000 and up', test:function(v){ return capMax(v) != null && capMax(v) >= 1000; }},
+  {key:'none', label:'Capacity unknown', test:function(v){ return capMax(v) == null; }}
 ];
 var AGE_CHIPS = [{key:'any', label:'Any'}, {key:'all_ages', label:'All ages'}, {key:'21_plus', label:'21+'}];
 var FIELDS = [
   {k:'name', l:'Name', req:true}, {k:'aka', l:'Also known as, former names'},
+  {k:'parent_venue', l:'Parent facility (if this is one room of it)'}, {k:'room_name', l:'Room name'},
   {k:'kind', l:'Room type', t:'select', o:KINDS}, {k:'status', l:'Status', t:'select', o:STATUS},
-  {k:'status_since', l:'Status since', t:'date'}, {k:'opened_year', l:'Year opened', t:'number'},
-  {k:'closed_on', l:'Closed on', t:'date'}, {k:'capacity', l:'Capacity', t:'number'},
-  {k:'capacity_note', l:'Capacity note'}, {k:'ages', l:'Ages', t:'select', o:AGES},
+  {k:'status_since', l:'Status since', t:'date'}, {k:'status_date_precision', l:'Date precision', t:'select', o:PRECISION},
+  {k:'opened_year', l:'Year opened', t:'number'}, {k:'closed_on', l:'Closed on', t:'date'},
+  {k:'closure_type', l:'Closure type'}, {k:'successor_venue', l:'Successor venue'},
+  {k:'capacity', l:'Capacity, maximum', t:'number'}, {k:'capacity_seated', l:'Capacity, seated', t:'number'},
+  {k:'capacity_standing', l:'Capacity, standing', t:'number'}, {k:'capacity_type', l:'Capacity figure is', t:'select', o:{advertised_audience:'Advertised by the venue', reported_estimate:'Reported estimate', unknown:'Unknown'}},
+  {k:'capacity_note', l:'Capacity note', t:'textarea', wide:true}, {k:'ages', l:'Ages', t:'select', o:AGES},
   {k:'address', l:'Street address'}, {k:'city', l:'City'}, {k:'state', l:'State'}, {k:'zip', l:'ZIP'},
-  {k:'county', l:'County'}, {k:'neighborhood', l:'Neighborhood'},
+  {k:'county', l:'County'}, {k:'neighborhood', l:'Neighborhood'}, {k:'region', l:'Region', t:'select', o:regionOptions()},
   {k:'lat', l:'Latitude', t:'number', step:'any'}, {k:'lng', l:'Longitude', t:'number', step:'any'},
   {k:'ownership', l:'Ownership', t:'select', o:OWNERSHIP}, {k:'owner_operator', l:'Owner or operator'},
   {k:'website', l:'Website', t:'url'}, {k:'booking_url', l:'Booking page', t:'url'},
@@ -241,15 +279,21 @@ var FIELDS = [
   {k:'pay_model', l:'Pay model (guarantee, door split, other)'}, {k:'sound_note', l:'Stage and backline'},
   {k:'booking_note', l:'Booking note', t:'textarea', wide:true},
   {k:'notes', l:'Public notes', t:'textarea', wide:true},
-  {k:'sources', l:'Sources', t:'textarea', wide:true}, {k:'liquor_license', l:'OLCC license (editors only)'}
+  {k:'sources', l:'Sources (URLs separated by |)', t:'textarea', wide:true},
+  {k:'researched_on', l:'Researched on', t:'date'},
+  {k:'status_confidence', l:'Research confidence: status', t:'select', o:CONF}, {k:'capacity_confidence', l:'Research confidence: capacity', t:'select', o:CONF},
+  {k:'ages_confidence', l:'Research confidence: ages', t:'select', o:CONF},
+  {k:'inclusion_basis', l:'Why it is listed (editors only)', t:'textarea', wide:true},
+  {k:'liquor_license', l:'OLCC license (editors only)'}
 ];
+function regionOptions(){ var o = {'': 'Not set'}; REGIONS.forEach(function(r){ o[r] = r; }); return o; }
 
 // ------------------------------------------------------------------ state
-var user = null, venues = [], events = {}, notes = {};
-var f = {city:'', kind:'', band:'any', age:'any'};   // the rail, mirrored in the query string
+var user = null, venues = [], events = {}, evidence = {}, notes = {};
+var f = {region:'', city:'', kind:'', band:'any', age:'any', booking:false};   // the rail, mirrored in the query string
 var view = 'register';                                // register | drafts (editors)
 var sheet = null;                                     // {mode: detail|edit|add|login|method, id}
-var eventForm = false, lastFocus = null, pushed = false;
+var eventForm = false, lastFocus = null, showSeed = false, showAllSources = false, showEarlier = false;
 var BASE = '/venues';
 
 function localDay(d){ return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
@@ -261,54 +305,75 @@ function fmt(d){
   if (!y || !m || !day) return d;
   return MONTHS[m - 1] + ' ' + day + ', ' + y;
 }
+// dates carry a precision: a closure known only to the year prints as the year
+function fmtP(d, prec){
+  if (!d) return '';
+  d = String(d).slice(0, 10);
+  if (prec === 'year') return d.slice(0, 4);
+  if (prec === 'month') return MONTHS[+d.slice(5, 7) - 1] + ' ' + d.slice(0, 4);
+  return fmt(d);
+}
 function yearOf(d){ return d ? +String(d).slice(0, 4) : null; }
 function num(n){ return n == null ? '' : Number(n).toLocaleString('en-US'); }
 function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 function link(url, label){
   if (!url) return '';
   var href = /^https?:\/\//i.test(url) ? url : 'https://' + url;
-  return '<a href="' + esc(href) + '" target="_blank" rel="noopener">' + esc(label || url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')) + '</a>';
+  return '<a href="' + esc(href) + '" target="_blank" rel="noopener">' + esc(label || domain(url)) + '</a>';
 }
+function domain(url){ return String(url).replace(/^https?:\/\/(www\.)?/, '').replace(/\/.*$/, ''); }
 function slugify(s){ return String(s || '').toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 80) || 'venue'; }
 function editable(){ return !!user; }
+function kindL(v){ return KINDS[v.kind] || KINDS.unknown; }
+function statusL(v){ return STATUS[v.status] || STATUS.unknown; }
+function agesL(v){ return AGES[v.ages] || AGES.unknown; }
 function byId(id){ return venues.filter(function(v){ return v.id === id; })[0]; }
 function bySlug(s){ return venues.filter(function(v){ return v.slug === s; })[0]; }
+function capMax(v){ return v.capacity != null ? v.capacity : (v.capacity_standing != null ? v.capacity_standing : v.capacity_seated); }
+function hasBooking(v){ return !!(v.booking_email || v.booking_url); }
 
 // ------------------------------------------------------------------ sets
-function inRegister(v){ return v.published && v.status !== 'closed'; }
-function inClosed(v){ return v.published && v.status === 'closed'; }
-function since2019(v){ var y = yearOf(v.closed_on); return y != null && y >= 2019; }
+function isCurrent(v){ return v.published && CURRENT.indexOf(v.status) >= 0; }
+function isTemp(v){ return v.published && v.status === 'temporarily_closed'; }
+function isPlanned(v){ return v.published && PLANNED.indexOf(v.status) >= 0; }
+function isGone(v){ return v.published && GONE.indexOf(v.status) >= 0; }
+function isDraft(v){ return !v.published; }
+function isResearched(v){ return !!v.venue_id; }
 function matches(v){
+  if (f.region && (v.region || '') !== f.region) return false;
   if (f.city && (v.city || '') !== f.city) return false;
   if (f.kind && v.kind !== f.kind) return false;
   var band = BANDS.filter(function(b){ return b.key === f.band; })[0] || BANDS[0];
   if (!band.test(v)) return false;
-  if (f.age === 'all_ages' && v.ages !== 'all_ages' && v.ages !== 'mixed') return false;
-  if (f.age === '21_plus' && v.ages !== '21_plus' && v.ages !== 'mixed') return false;
+  if (f.age === 'all_ages' && v.ages !== 'all_ages') return false;
+  if (f.age === '21_plus' && v.ages !== '21_plus') return false;
+  if (f.booking && !hasBooking(v)) return false;
   return true;
 }
-function filtered(){ return f.city || f.kind || f.band !== 'any' || f.age !== 'any'; }
+function filtered(){ return !!(f.region || f.city || f.kind || f.band !== 'any' || f.age !== 'any' || f.booking); }
 function byCap(a, b){
-  if (a.capacity == null && b.capacity == null) return a.name.localeCompare(b.name);
-  if (a.capacity == null) return 1;
-  if (b.capacity == null) return -1;
-  return b.capacity - a.capacity || a.name.localeCompare(b.name);
+  var ca = capMax(a), cb = capMax(b);
+  if (ca == null && cb == null) return a.name.localeCompare(b.name);
+  if (ca == null) return 1;
+  if (cb == null) return -1;
+  return cb - ca || a.name.localeCompare(b.name);
 }
 function byClosure(a, b){
-  var ya = yearOf(a.closed_on), yb = yearOf(b.closed_on);
-  if (ya == null && yb == null) return a.name.localeCompare(b.name);
-  if (ya == null) return 1;
-  if (yb == null) return -1;
+  if (!a.closed_on && !b.closed_on) return a.name.localeCompare(b.name);
+  if (!a.closed_on) return 1;
+  if (!b.closed_on) return -1;
   return String(b.closed_on).localeCompare(String(a.closed_on)) || a.name.localeCompare(b.name);
 }
 
 // ------------------------------------------------------------------ url
 function readUrl(){
   var q = new URLSearchParams(location.search);
+  f.region = REGIONS.indexOf(q.get('region')) >= 0 ? q.get('region') : '';
   f.city = q.get('city') || '';
   f.kind = q.get('kind') || '';
   f.band = BANDS.some(function(b){ return b.key === q.get('cap'); }) ? q.get('cap') : 'any';
   f.age = AGE_CHIPS.some(function(a){ return a.key === q.get('ages'); }) ? q.get('ages') : 'any';
+  f.booking = q.get('booking') === '1';
   var m = location.pathname.match(/^\/venues\/([^\/]+)\/?$/);
   var slug = m && m[1] !== 'index.html' ? decodeURIComponent(m[1]) : (location.hash.length > 1 ? decodeURIComponent(location.hash.slice(1)) : '');
   var hit = slug ? bySlug(slug) : null;
@@ -317,10 +382,12 @@ function readUrl(){
 }
 function urlFor(slug){
   var q = new URLSearchParams();
+  if (f.region) q.set('region', f.region);
   if (f.city) q.set('city', f.city);
   if (f.kind) q.set('kind', f.kind);
   if (f.band !== 'any') q.set('cap', f.band);
   if (f.age !== 'any') q.set('ages', f.age);
+  if (f.booking) q.set('booking', '1');
   var s = q.toString();
   return BASE + (slug ? '/' + encodeURIComponent(slug) : '') + (s ? '?' + s : '');
 }
@@ -345,14 +412,14 @@ async function fetchAll(table, cols, mod){
 }
 async function load(){
   $('results').innerHTML = '<p class="empty">Loading the directory...</p>';
-  var cols = editable() ? EDITOR_COLS : PUBLIC_COLS;
-  var ecols = editable() ? EDITOR_EVENT_COLS : PUBLIC_EVENT_COLS;
   try {
-    venues = await fetchAll('venues', cols, editable() ? null : function(qb){ return qb.eq('published', true); });
-    var evs = await fetchAll('venue_events', ecols);
+    venues = await fetchAll('venues', editable() ? EDITOR_COLS : PUBLIC_COLS, editable() ? null : function(qb){ return qb.eq('published', true); });
+    var evs = await fetchAll('venue_events', editable() ? EDITOR_EVENT_COLS : PUBLIC_EVENT_COLS);
     events = {};
     evs.forEach(function(e){ (events[e.venue_id] = events[e.venue_id] || []).push(e); });
     Object.keys(events).forEach(function(k){ events[k].sort(function(a, b){ return String(b.occurred_on || '').localeCompare(String(a.occurred_on || '')) || b.id - a.id; }); });
+    evidence = {};
+    (await fetchAll('venue_evidence', editable() ? EDITOR_EVIDENCE_COLS : PUBLIC_EVIDENCE_COLS)).forEach(function(x){ (evidence[x.venue_id] = evidence[x.venue_id] || []).push(x); });
     notes = {};
     if (editable()){
       (await fetchAll('venue_notes', ['id','venue_id','note','created_at','created_by'])).forEach(function(n){ (notes[n.venue_id] = notes[n.venue_id] || []).push(n); });
@@ -367,31 +434,45 @@ async function load(){
 }
 
 // ------------------------------------------------------------------ render
-function render(){ renderNav(); renderFigures(); renderRail(); renderResults(); renderFoot(); renderSheet(); syncUrl(); }
+function render(){ renderNav(); renderHeroLine(); renderFigures(); renderRail(); renderResults(); renderFoot(); renderSheet(); syncUrl(); }
 function navItem(action, label, cls){ return '<button data-nav="' + action + '"' + (cls ? ' class="' + cls + '"' : '') + '>' + label + '</button>'; }
 function renderNav(){
-  var drafts = venues.filter(function(v){ return !v.published; }).length;
-  var h = navItem('register', 'Directory', view === 'register' ? 'current' : '') + navItem('closures', 'Closures');
-  if (editable()) h += navItem('drafts', 'Drafts <span class="tnum">' + drafts + '</span>', view === 'drafts' ? 'current' : '');
+  var queue = venues.filter(function(v){ return isDraft(v) && isResearched(v); }).length;
+  var h = navItem('register', 'Directory', view === 'register' ? 'current' : '') + navItem('closures', 'Openings &amp; closures');
+  if (editable()) h += navItem('drafts', 'Research queue <span class="tnum">' + queue + '</span>', view === 'drafts' ? 'current' : '');
   h += navItem('method', 'Methodology');
   if (editable()) h += navItem('add', 'Add a venue');
   h += editable() ? '<span class="who" title="' + esc(user.email) + '">' + esc(user.email.split('@')[0]) + '</span>' + navItem('signout', 'Sign out') : navItem('login', 'Editor sign in');
   $('nav').innerHTML = h;
 }
+function renderHeroLine(){
+  var pub = venues.filter(function(v){ return v.published; });
+  var latest = pub.reduce(function(m, v){ return v.researched_on && v.researched_on > m ? v.researched_on : m; }, '');
+  var sourced = pub.filter(function(v){ return (evidence[v.id] || []).length || v.sources; }).length;
+  var verified = pub.filter(function(v){ return v.last_verified_on; }).length;
+  var parts = [];
+  if (latest) parts.push('Researched through ' + fmt(latest));
+  if (sourced) parts.push(num(sourced) + ' rooms with cited sources');
+  parts.push(verified ? num(verified) + ' verified by an editor' : 'Editor verification in progress');
+  $('heroline').innerHTML = parts.join(' · ');
+}
 function renderFigures(){
-  var open = venues.filter(inRegister), closed = venues.filter(inClosed).filter(since2019);
-  var allAges = open.filter(function(v){ return v.ages === 'all_ages'; }).length;
-  var lost = closed.reduce(function(t, v){ return t + (v.capacity || 0); }, 0);
-  var figs = [[num(open.length), 'Open', ''], [num(closed.length), 'Closed since 2019', ' hot'], [num(allAges), 'All ages', ''], [num(lost), 'Capacity lost', '']];
+  var current = venues.filter(isCurrent), gone = venues.filter(isGone), planned = venues.filter(isPlanned);
+  var withCap = current.filter(function(v){ return capMax(v) != null; }).length;
+  var figs = [[num(current.length), 'Current venue rooms', ''], [num(gone.length), 'Closed or ceased music', ' hot'],
+    [num(withCap), 'With a recorded capacity', ''], [num(planned.length), 'Planned', '']];
   $('figures').innerHTML = figs.map(function(x){ return '<div class="cell' + x[2] + '"><div class="num">' + x[0] + '</div><div class="lab">' + x[1] + '</div></div>'; }).join('');
 }
 function renderRail(){
-  var pool = venues.filter(inRegister);
-  var cities = {}, kinds = {};
-  pool.forEach(function(v){ if (v.city) cities[v.city] = 1; kinds[v.kind] = 1; });
+  var pool = venues.filter(isCurrent);
+  var regions = {}, cities = {}, kinds = {};
+  pool.forEach(function(v){ if (v.region) regions[v.region] = 1; if (v.city) cities[v.city] = 1; kinds[v.kind] = 1; });
+  var regionOpts = REGIONS.filter(function(r){ return regions[r]; });
   var cityOpts = Object.keys(cities).sort();
-  var kindOpts = Object.keys(kinds).sort(function(a, b){ return KINDS[a].localeCompare(KINDS[b]); });
+  var kindOpts = Object.keys(kinds).filter(function(k){ return KINDS[k]; }).sort(function(a, b){ return KINDS[a].localeCompare(KINDS[b]); });
   var h = '<div class="rail-h">Filter</div>';
+  h += '<label class="sel"><span class="lbl">Region</span><select id="regionSel"><option value="">All regions</option>' +
+    regionOpts.map(function(r){ return '<option value="' + esc(r) + '"' + (r === f.region ? ' selected' : '') + '>' + esc(r) + '</option>'; }).join('') + '</select></label>';
   h += '<label class="sel"><span class="lbl">City</span><select id="citySel"><option value="">All cities</option>' +
     cityOpts.map(function(c){ return '<option value="' + esc(c) + '"' + (c === f.city ? ' selected' : '') + '>' + esc(c) + '</option>'; }).join('') + '</select></label>';
   h += '<label class="sel"><span class="lbl">Room type</span><select id="kindSel"><option value="">All room types</option>' +
@@ -402,78 +483,143 @@ function renderRail(){
   h += '<div class="chips"><span class="lbl">Ages</span><div class="chip-list">' + AGE_CHIPS.map(function(a){
     return '<button class="chip' + (a.key === f.age ? ' active' : '') + '" data-age="' + a.key + '">' + a.label + '</button>';
   }).join('') + '</div></div>';
-  h += '<button class="clear" data-clear="1">Clear all filters</button>';
+  h += '<div class="chips"><span class="lbl">Booking</span><div class="chip-list"><button class="chip' + (f.booking ? ' active' : '') + '" data-booking="1">Has a booking contact</button></div></div>';
+  h += '<button class="clear" data-clear="1">Clear filters</button>';
   $('rail').innerHTML = h;
 }
-function capHtml(v){ return v.capacity != null ? '<span class="cap">' + num(v.capacity) + '</span>' : '<span class="cap none">capacity unknown</span>'; }
+function capShort(v){   // the card numeral: the biggest figure, with what kind of figure it is
+  var n = capMax(v);
+  if (n == null) return '';
+  var k = v.capacity != null ? (v.capacity_standing === v.capacity ? 'standing' : (v.capacity_seated === v.capacity ? 'seated' : 'max')) :
+    (v.capacity_standing != null ? 'standing' : 'seated');
+  var t = CAP_TYPE[v.capacity_type] || '';
+  return '<div class="capwrap"><span class="cap">' + num(n) + '</span><span class="capk">' + k + (t ? ' · ' + t : '') + '</span></div>';
+}
+function capFull(v){   // the sheet: every configuration known
+  var parts = [];
+  if (v.capacity_standing != null) parts.push(num(v.capacity_standing) + ' standing');
+  if (v.capacity_seated != null) parts.push(num(v.capacity_seated) + ' seated');
+  if (!parts.length && v.capacity != null) parts.push(num(v.capacity) + ' maximum');
+  else if (v.capacity != null && v.capacity !== v.capacity_standing && v.capacity !== v.capacity_seated) parts.unshift('up to ' + num(v.capacity));
+  if (!parts.length) return '<span class="none">Not yet verified</span>';
+  var t = CAP_TYPE[v.capacity_type] || '';
+  return esc(parts.join(' / ')) + (t ? ' <span class="none">(' + t + ' figure)</span>' : '') + (v.capacity_note ? '<br><span class="none">' + esc(v.capacity_note) + '</span>' : '');
+}
 function locLine(v){
-  var parts = [esc(v.city || (v.state !== 'OR' ? v.state : 'Oregon')), KINDS[v.kind]];
-  if (v.status !== 'open' && v.status !== 'unknown' && v.status !== 'closed') parts.push('<span class="flag">' + STATUS[v.status].toLowerCase() + '</span>');
-  if (!v.last_verified_on) parts.push('<span class="flag">unverified</span>');
+  var parts = [esc(v.city || (v.state !== 'OR' ? v.state : 'Oregon')), kindL(v)];
+  if (v.status !== 'open' && v.status !== 'unknown') parts.push('<span class="flag">' + statusL(v).toLowerCase() + '</span>');
+  if (!v.published) parts.push('<span class="flag">' + (isResearched(v) ? 'research queue' : 'seed row') + '</span>');
   return parts.join(' · ');
 }
 function bookingHtml(v){   // sheet: real links
-  if (v.booking_email) return '<a href="mailto:' + esc(v.booking_email) + '">' + esc(v.booking_email) + '</a>';
-  if (v.booking_url) return link(v.booking_url, 'Booking page');
-  if (v.website) return link(v.website, 'Website');
-  if (v.phone) return esc(v.phone);
-  return '<span class="none">Not listed</span>';
+  var parts = [];
+  if (v.booking_email) parts.push('<a href="mailto:' + esc(v.booking_email) + '">' + esc(v.booking_email) + '</a>');
+  if (v.booking_url) parts.push(link(v.booking_url, 'Booking page'));
+  if (!parts.length) return '<span class="none">No booking contact listed</span>';
+  return parts.join(' · ') + (v.booking_note ? '<br><span class="none">' + esc(v.booking_note) + '</span>' : '');
 }
-function domain(url){ return String(url).replace(/^https?:\/\/(www\.)?/, '').replace(/\/.*$/, ''); }
 function bookingText(v){   // card: the card itself is a link, so no anchors inside it
   if (v.booking_email) return esc(v.booking_email);
   if (v.booking_url) return esc(domain(v.booking_url)) + ' <span class="none">(booking page)</span>';
-  if (v.website) return esc(domain(v.website));
-  if (v.phone) return esc(v.phone);
-  return '<span class="none">Not listed</span>';
+  return '';
 }
 function card(v){
+  var fields = '';
+  if (hasBooking(v)) fields += '<div><div class="fl">Booking</div><div class="fv">' + bookingText(v) + '</div></div>';
+  if (v.sound_note) fields += '<div><div class="fl">Stage &amp; backline</div><div class="fv stage">' + esc(v.sound_note) + '</div></div>';
   return '<a class="card" href="' + urlFor(v.slug) + '" data-open="' + v.id + '">' +
-    '<div><div class="ident"><h3>' + esc(v.name) + '</h3>' + capHtml(v) + '</div><div class="loc">' + locLine(v) + '</div></div>' +
-    '<span class="badge' + (v.ages === 'all_ages' ? ' aa' : '') + '">' + AGES[v.ages] + '</span>' +
-    '<div class="fields"><div><div class="fl">Booking</div><div class="fv">' + bookingText(v) + '</div></div>' +
-    '<div><div class="fl">Stage &amp; backline</div><div class="fv stage">' + (v.sound_note ? esc(v.sound_note) : '<span class="none">No notes yet</span>') + '</div></div></div></a>';
+    '<div>' + (v.parent_venue ? '<div class="parent">' + esc(v.parent_venue) + '</div>' : '') +
+    '<div class="ident"><h3>' + esc(v.name) + '</h3>' + capShort(v) + '</div><div class="loc">' + locLine(v) + '</div></div>' +
+    (v.ages && v.ages !== 'unknown' ? '<span class="badge' + (v.ages === 'all_ages' ? ' aa' : '') + '">' + agesL(v) + '</span>' : '') +
+    (fields ? '<div class="fields">' + fields + '</div>' : '') + '</a>';
 }
 function ledgerRow(v){
-  var y = yearOf(v.closed_on);
+  var y = v.closed_on ? fmtP(v.closed_on, v.status_date_precision === 'day' ? 'year' : v.status_date_precision) : '';
   return '<a class="lrow" href="' + urlFor(v.slug) + '" data-open="' + v.id + '"><span class="ln">' + esc(v.name) + '</span>' +
-    '<span class="lc">' + esc(v.city || '') + (v.city ? ' · ' : '') + KINDS[v.kind] + '</span>' +
-    '<span class="lcap">' + (v.capacity != null ? num(v.capacity) : '') + '</span>' +
-    '<span class="ly">' + (y ? y : '') + '</span></a>';
+    '<span class="lc">' + esc(v.city || '') + (v.status === 'ceased_live_music' ? ' · ceased live music' : '') + '</span>' +
+    '<span class="lcap">' + (capMax(v) != null ? num(capMax(v)) : '') + '</span>' +
+    '<span class="ly">' + esc(y) + '</span></a>';
+}
+function seedRow(v){
+  return '<a class="lrow" href="' + urlFor(v.slug) + '" data-open="' + v.id + '"><span class="ln">' + esc(v.name) + '</span>' +
+    '<span class="lc">' + esc(v.city || '') + '</span><span class="lcap">' + kindL(v) + '</span></a>';
+}
+function section(title, note, id){
+  return '<div class="sec"' + (id ? ' id="' + id + '"' : '') + '><h2>' + title + '</h2>' + (note ? '<div class="note">' + note + '</div>' : '') + '</div>';
+}
+function timelineRows(){
+  var rows = [];
+  Object.keys(events).forEach(function(k){
+    var v = byId(+k);
+    if (!v || !v.published) return;
+    events[k].forEach(function(e){ if (e.occurred_on) rows.push({e: e, v: v}); });
+  });
+  rows.sort(function(a, b){ return String(b.e.occurred_on).localeCompare(String(a.e.occurred_on)) || a.v.name.localeCompare(b.v.name); });
+  return rows;
+}
+function timelineRow(r){
+  var e = r.e, v = r.v;
+  return '<div class="tl-row"><span class="tl-when">' + esc(fmtP(e.occurred_on, e.date_precision)) + '</span>' +
+    '<span class="tl-what"><span class="k">' + (EVENT_KINDS[e.kind] || EVENT_KINDS.other) + '</span><b><a href="' + urlFor(v.slug) + '" data-open="' + v.id + '">' + esc(v.name) + '</a></b>' +
+    (v.city ? ' <span class="none">' + esc(v.city) + '</span>' : '') + (e.detail ? '<br>' + esc(e.detail.length > 160 ? e.detail.slice(0, 157) + '...' : e.detail) : '') +
+    (e.source_url ? ' ' + link(e.source_url, 'source') : '') + '</span></div>';
 }
 function renderResults(){
-  var pool = view === 'drafts' ? venues.filter(function(v){ return !v.published; }) : venues.filter(inRegister);
-  var shown = pool.filter(matches).sort(byCap);
-  var h = '<div class="bar"><span>' + num(shown.length) + ' ' +
-    (view === 'drafts' ? 'drafts<span class="dim"> · awaiting review</span>' : 'open venues<span class="dim">' + (filtered() ? ' · filtered' : ' · whole state') + '</span>') +
-    '</span><span class="dim">Capacity ↓</span></div>';
-  if (shown.length) h += '<div class="grid">' + shown.map(card).join('') + '</div>';
-  else if (view === 'drafts') h += '<p class="empty">No drafts' + (filtered() ? ' match those filters.' : '. Everything seeded has been reviewed.') + '</p>';
-  else h += '<p class="empty">No open venues match those filters. <span>Try widening capacity.</span></p>';
-  if (view === 'register'){
-    var closed = venues.filter(inClosed).sort(byClosure);
-    h += '<section class="closed" id="closed"><div class="closed-h"><h2>Closed</h2><div class="note">Rooms that have shut since 2019. Kept in the directory because the loss is the record.</div></div><div class="ledger">' +
-      (closed.length ? closed.map(ledgerRow).join('') : '<p class="empty">No closures recorded yet. Editors add them from a venue’s listing.</p>') + '</div></section>';
+  var h = '';
+  if (view === 'drafts'){
+    var queue = venues.filter(function(v){ return isDraft(v) && isResearched(v); }).filter(matches).sort(byCap);
+    var seed = venues.filter(function(v){ return isDraft(v) && !isResearched(v); }).sort(function(a, b){ return a.name.localeCompare(b.name); });
+    h += '<div class="bar"><span>' + num(queue.length) + ' in the research queue<span class="dim"> · not public</span></span><span class="dim">Capacity ↓</span></div>';
+    h += queue.length ? '<div class="grid">' + queue.map(card).join('') + '</div>' : '<p class="empty">Nothing waiting' + (filtered() ? ' under these filters.' : '.') + '</p>';
+    if (seed.length){
+      h += section('Seed rows not in the research set', num(seed.length) + ' rooms from the OpenStreetMap seed that the research did not cover. Discard or publish from each listing.');
+      h += showSeed ? '<div class="ledger seedlist">' + seed.map(seedRow).join('') + '</div>' : '<p class="empty"><button class="btn-text" data-toggle="seed">Show the ' + num(seed.length) + ' seed rows</button></p>';
+    }
+    $('results').innerHTML = h;
+    return;
   }
+  var shown = venues.filter(isCurrent).filter(matches).sort(byCap);
+  h += '<div class="bar"><span>' + num(shown.length) + ' current venue rooms<span class="dim">' + (filtered() ? ' · filtered' : ' · whole state') + '</span></span><span class="dim">Capacity ↓</span></div>';
+  h += shown.length ? '<div class="grid">' + shown.map(card).join('') + '</div>' : '<p class="empty">No current rooms match those filters. <span>Try widening capacity.</span></p>';
+  var temp = venues.filter(isTemp).filter(matches).sort(byCap);
+  if (temp.length) h += section('Temporarily closed', 'Not counted as current, not yet a loss.') + '<div class="grid">' + temp.map(card).join('') + '</div>';
+  var planned = venues.filter(isPlanned).filter(matches).sort(byCap);
+  if (planned.length) h += section('Planned', 'Announced or under construction. Future capacity, not current.') + '<div class="grid">' + planned.map(card).join('') + '</div>';
+  var gone = venues.filter(isGone).sort(byClosure);
+  h += '<section class="closed" id="closed"><div class="closed-h"><h2>Openings &amp; closures</h2><div class="note">Rooms that have shut or stopped presenting live music since 2019. Kept in the directory because the loss is the record.</div></div><div class="ledger">' +
+    (gone.length ? gone.map(ledgerRow).join('') : '<p class="empty">No closures recorded yet.</p>') + '</div>';
+  var tl = timelineRows();
+  if (tl.length){
+    var recent = tl.filter(function(r){ return String(r.e.occurred_on) >= '2019-01-01'; }), earlier = tl.length - recent.length;
+    h += section('Timeline', 'Dated openings, closures, reopenings and relocations, from cited sources.') + '<div class="tl">' + (showEarlier ? tl : recent).map(timelineRow).join('') +
+      (earlier && !showEarlier ? '<p class="empty" style="margin:14px 0 0"><button class="btn-text" data-toggle="earlier">Show ' + earlier + ' earlier events</button></p>' : '') + '</div>';
+  }
+  h += '</section>';
   $('results').innerHTML = h;
 }
 function renderFoot(){
-  $('foot').innerHTML = 'Oregon Venue Directory, a project of Oregon Sound Circuit. Listings are maintained by volunteer editors and marked when verified; ' +
-    'seed listings include data from <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a> (ODbL). ' +
-    '<button data-nav="method">Methodology</button> · <button data-nav="csv">Download the open venues as CSV</button>';
+  $('foot').innerHTML = 'Oregon Venue Directory, a project of Oregon Sound Circuit. Listings are researched from cited sources and verified by volunteer editors over time. ' +
+    'Seed listings include data from <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a> (ODbL). ' +
+    '<button data-nav="method">Methodology</button> · <button data-nav="csv">Download the current rooms as CSV</button>';
 }
 
 // ------------------------------------------------------------------ sheet
 function eyebrow(v){
-  if (v.status === 'closed') return 'Closed' + (yearOf(v.closed_on) ? ' ' + yearOf(v.closed_on) : '');
-  if (!v.published) return 'Draft · not yet published';
-  var lead = v.status === 'unknown' ? 'Listed' : STATUS[v.status];
-  return lead + (v.last_verified_on ? ' · verified' : ' · not yet verified');
+  if (!v.published) return isResearched(v) ? 'Research queue · not public' : 'Seed row · not public';
+  if (GONE.indexOf(v.status) >= 0){
+    var when = v.closed_on ? ' ' + fmtP(v.closed_on, v.status_date_precision === 'day' ? 'year' : v.status_date_precision) : '';
+    return statusL(v) + when;
+  }
+  return statusL(v) + (v.last_verified_on ? ' · verified' : '');
 }
 function metaLine(v){
-  var parts = [v.city, KINDS[v.kind]];
+  var parts = [];
+  if (v.parent_venue) parts.push('Part of ' + esc(v.parent_venue));
+  if (v.city) parts.push(esc(v.city));
+  if (v.region) parts.push(esc(v.region));
+  parts.push(kindL(v));
   if (v.opened_year) parts.push('opened ' + v.opened_year);
-  return parts.filter(Boolean).map(esc).join(' · ');
+  return parts.join(' · ');
 }
 function mapLink(v){
   if (v.lat != null && v.lng != null) return '<a href="https://www.openstreetmap.org/?mlat=' + v.lat + '&mlon=' + v.lng + '#map=17/' + v.lat + '/' + v.lng + '" target="_blank" rel="noopener">map</a>';
@@ -481,32 +627,50 @@ function mapLink(v){
   return '';
 }
 function detailRows(v){
-  var rows = [
-    ['Capacity', v.capacity != null ? num(v.capacity) + (v.capacity_note ? ' <span class="none">(' + esc(v.capacity_note) + ')</span>' : '') : '<span class="none">Not recorded</span>'],
-    ['Ages', AGES[v.ages]],
-    ['City', esc(v.city || '') + (v.neighborhood ? ' <span class="none">(' + esc(v.neighborhood) + ')</span>' : '') || '<span class="none">Not recorded</span>'],
-    ['Room type', KINDS[v.kind]],
-    ['Ownership', OWNERSHIP[v.ownership] + (v.owner_operator ? ' · ' + esc(v.owner_operator) : '')],
-    ['Booking', bookingHtml(v) + (v.booking_note ? '<br><span class="none">' + esc(v.booking_note) + '</span>' : '')],
-    ['Stage &amp; backline', v.sound_note ? esc(v.sound_note) : '<span class="none">No notes yet</span>']
-  ];
+  var rows = [['Capacity', capFull(v)], ['Ages', v.ages === 'unknown' ? '<span class="none">Not verified</span>' : agesL(v)]];
   var addr = [v.address, [v.city, v.state].filter(Boolean).join(' ') + (v.zip ? ' ' + v.zip : '')].filter(function(s){ return s && s.trim(); }).join(', ');
-  if (addr) rows.push(['Address', esc(addr) + (mapLink(v) ? ' · ' + mapLink(v) : '')]);
+  rows.push(['Address', addr ? esc(addr) + (v.neighborhood ? ' <span class="none">(' + esc(v.neighborhood) + ')</span>' : '') + (mapLink(v) ? ' · ' + mapLink(v) : '') : '<span class="none">Not recorded</span>']);
+  rows.push(['Room type', kindL(v) + (v.room_name && v.room_name !== v.name ? ' · ' + esc(v.room_name) : '')]);
+  if (v.ownership !== 'unknown' || v.owner_operator) rows.push(['Ownership', (v.ownership !== 'unknown' ? OWNERSHIP[v.ownership] : '') + (v.owner_operator ? (v.ownership !== 'unknown' ? ' · ' : '') + esc(v.owner_operator) : '')]);
+  rows.push(['Booking', bookingHtml(v)]);
+  if (v.sound_note) rows.push(['Stage &amp; backline', esc(v.sound_note)]);
   if (v.website) rows.push(['Website', link(v.website)]);
-  if (v.instagram) rows.push(['Instagram', link(/^https?:/.test(v.instagram) ? v.instagram : 'https://instagram.com/' + v.instagram.replace(/^@/, ''), v.instagram.replace(/^https?:\/\/(www\.)?instagram\.com\//, '@'))]);
-  if (v.phone && !(v.booking_email || v.booking_url || v.website)) rows.push(['Phone', esc(v.phone)]);
-  if (v.genres) rows.push(['Genres', esc(v.genres)]);
+  if (v.instagram) rows.push(['Instagram', link(/^https?:/.test(v.instagram) ? v.instagram : 'https://instagram.com/' + v.instagram.replace(/^@/, ''), v.instagram.replace(/^https?:\/\/(www\.)?instagram\.com\//, '@').replace(/\/$/, ''))]);
+  if (v.phone) rows.push(['Phone', esc(v.phone)]);
+  if (v.genres) rows.push(['Genres', esc(v.genres.split('|').map(function(s){ return s.trim(); }).join(', '))]);
   if (v.pay_model) rows.push(['Pay model', esc(v.pay_model)]);
   if (v.aka) rows.push(['Also known as', esc(v.aka)]);
-  if (v.status === 'closed' && v.closed_on) rows.push(['Closed on', fmt(v.closed_on)]);
-  else if (v.status_since && v.status !== 'unknown') rows.push([STATUS[v.status] + ' since', fmt(v.status_since)]);
+  if (GONE.indexOf(v.status) >= 0 && v.closed_on) rows.push([v.status === 'closed' ? 'Closed' : 'Ceased live music', fmtP(v.closed_on, v.status_date_precision) +
+    (v.closure_type && v.closure_type.length < 40 ? ' <span class="none">(' + esc(v.closure_type.replace(/_/g, ' ')) + ')</span>' : '') +
+    (v.closure_type && v.closure_type.length >= 40 ? '<br><span class="none">' + esc(v.closure_type) + '</span>' : '')]);
+  if (v.successor_venue) rows.push(['Successor', esc(v.successor_venue)]);
+  if (v.status_since && GONE.indexOf(v.status) < 0 && v.status !== 'unknown') rows.push([statusL(v) + ' since', fmtP(v.status_since, v.status_date_precision)]);
   if (v.notes) rows.push(['Notes', esc(v.notes)]);
-  if (v.sources) rows.push(['Sources', esc(v.sources)]);
   if (editable() && v.liquor_license) rows.push(['OLCC license', esc(v.liquor_license)]);
   return rows;
 }
+function sourcesHtml(v){
+  var ev = (evidence[v.id] || []).filter(function(x){ return x.field_name !== 'activity'; });
+  var acts = (evidence[v.id] || []).filter(function(x){ return x.field_name === 'activity'; });
+  var h = '';
+  if (ev.length){
+    var list = showAllSources ? ev : ev.slice(0, 8);
+    h += '<div class="sec-h">Sources (' + ev.length + ')</div>';
+    list.forEach(function(x){
+      h += '<p class="src">' + (x.source_url ? link(x.source_url, x.source_title || domain(x.source_url)) : esc(x.source_title || '')) +
+        (x.publisher ? ' <span class="none">' + esc(x.publisher) + '</span>' : '') + '<span class="k">' + esc((x.field_name || '').replace(/_/g, ' ')) + '</span>' +
+        (x.note ? '<br><span class="none">' + esc(x.note) + '</span>' : '') + (editable() && x.confidence ? ' <span class="k">' + esc(x.confidence) + '</span>' : '') + '</p>';
+    });
+    if (ev.length > 8 && !showAllSources) h += '<p class="src"><button class="btn-text" data-toggle="sources">Show all ' + ev.length + ' sources</button></p>';
+  } else if (v.sources){
+    h += '<div class="sec-h">Sources</div>';
+    v.sources.split('|').map(function(s){ return s.trim(); }).filter(Boolean).forEach(function(s){ h += '<p class="src">' + (/^https?:/.test(s) ? link(s) : esc(s)) + '</p>'; });
+  }
+  if (acts.length) h += '<p class="src"><span class="none">Recent activity on record: ' + acts.slice(0, 3).map(function(x){ return esc(x.asserted_value || '') + (x.source_url ? ' (' + link(x.source_url, 'source') + ')' : ''); }).join('; ') + '</span></p>';
+  return h;
+}
 function detailHtml(v){
-  var h = '<div class="sheet-head"><div><span class="eyebrow' + (v.status === 'closed' ? ' hot' : '') + '">' + eyebrow(v) + '</span><h2 id="sheetTitle">' + esc(v.name) + '</h2><div class="meta">' + metaLine(v) + '</div></div>' +
+  var h = '<div class="sheet-head"><div><span class="eyebrow' + (GONE.indexOf(v.status) >= 0 ? ' hot' : '') + '">' + eyebrow(v) + '</span><h2 id="sheetTitle">' + esc(v.name) + '</h2><div class="meta">' + metaLine(v) + '</div></div>' +
     '<button class="x" data-close="1" aria-label="Close">×</button></div>';
   h += '<dl class="dl">' + detailRows(v).map(function(r){ return '<div><dt>' + r[0] + '</dt><dd>' + r[1] + '</dd></div>'; }).join('') + '</dl>';
   var evs = events[v.id] || [];
@@ -514,23 +678,25 @@ function detailHtml(v){
     h += '<div class="sec-h">History</div>';
     if (!evs.length) h += '<p class="hist"><span class="none">No dated events recorded yet.</span></p>';
     evs.forEach(function(e){
-      h += '<p class="hist"><b>' + (e.occurred_on ? fmt(e.occurred_on) : 'Date unknown') + '</b> · ' + EVENT_KINDS[e.kind] + (e.detail ? ': ' + esc(e.detail) : '') +
+      h += '<p class="hist"><b>' + (e.occurred_on ? fmtP(e.occurred_on, e.date_precision) : 'Date unknown') + '</b> · ' + (EVENT_KINDS[e.kind] || EVENT_KINDS.other) + (e.detail ? ': ' + esc(e.detail) : '') +
         (e.source_url ? ' · ' + link(e.source_url, 'source') : '') + (editable() ? ' <button class="btn-text" data-delev="' + e.id + '">remove</button>' : '') + '</p>';
     });
   }
+  h += sourcesHtml(v);
   if (editable()) h += editorTools(v);
-  var verified = v.last_verified_on ? 'Last verified by an editor ' + fmt(v.last_verified_on) + (editable() && v.verified_by ? ' (' + esc(v.verified_by) + ')' : '') + '.' :
-    'Not yet verified by an editor. Seeded from public data, so details may be out of date.';
-  h += '<p class="sheet-foot">' + verified + '</p>';
+  var foot = [];
+  if (v.researched_on) foot.push('Researched ' + fmt(v.researched_on) + ((evidence[v.id] || []).length ? ' from ' + (evidence[v.id] || []).length + ' cited sources' : '') + '.');
+  foot.push(v.last_verified_on ? 'Verified by an editor ' + fmt(v.last_verified_on) + (editable() && v.verified_by ? ' (' + esc(v.verified_by) + ')' : '') + '.' : 'Not yet verified by an editor, so details may have changed.');
+  h += '<p class="sheet-foot">' + foot.join(' ') + '</p>';
   return h;
 }
 function editorTools(v){
   var h = '<div class="tools"><span class="tl">Editor</span>' +
-    '<button class="btn btn-ink" data-act="verify" data-id="' + v.id + '">' + (v.status === 'open' ? 'Verified open today' : 'Confirm open') + '</button>' +
+    '<button class="btn btn-ink" data-act="verify" data-id="' + v.id + '">' + (v.last_verified_on === TODAY ? 'Verified today' : 'Verify listing') + '</button>' +
     '<button class="btn" data-act="edit" data-id="' + v.id + '">Edit</button>' +
     '<button class="btn" data-act="event" data-id="' + v.id + '">Add event</button>' +
     '<button class="btn" data-act="pub" data-id="' + v.id + '">' + (v.published ? 'Unpublish' : 'Publish') + '</button>' +
-    (!v.published ? '<button class="btn btn-quiet" data-act="discard" data-id="' + v.id + '">Discard draft</button>' : '') + '</div>';
+    (!v.published ? '<button class="btn btn-quiet" data-act="discard" data-id="' + v.id + '">Discard</button>' : '') + '</div>';
   if (eventForm){
     h += '<div class="inline"><label><span>Event</span><select id="evKind">' + Object.keys(EVENT_KINDS).map(function(k){ return '<option value="' + k + '">' + EVENT_KINDS[k] + '</option>'; }).join('') + '</select></label>' +
       '<label><span>Date</span><input type="date" id="evDate" value="' + TODAY + '"></label>' +
@@ -539,12 +705,15 @@ function editorTools(v){
       '<label class="check"><input type="checkbox" id="evSet" checked> Also set the venue status to match</label>' +
       '<span><button class="btn btn-ink" data-act="saveEvent" data-id="' + v.id + '">Save event</button> <button class="btn-text" data-act="cancelEvent">Cancel</button></span></div>';
   }
+  var conf = ['status', 'capacity', 'ages'].map(function(k){ return k + ' ' + (v[k + '_confidence'] || 'unknown'); }).join(' · ');
+  h += '<div class="sec-h">Research notes (editors only)</div>' +
+    '<p class="hist"><span class="none">Research confidence: ' + esc(conf) + (v.source_origin ? ' · origin ' + esc(v.source_origin) : '') + '</span></p>' +
+    (v.inclusion_basis ? '<p class="hist">' + esc(v.inclusion_basis) + '</p>' : '');
   var ns = notes[v.id] || [];
   h += '<div class="sec-h">Private editor notes</div>';
   ns.forEach(function(n){ h += '<div class="mynote"><b>' + esc((n.created_by || '').split('@')[0]) + ' · ' + fmt(n.created_at) + '</b>' + esc(n.note) + '</div>'; });
   h += '<textarea class="notebox" id="noteText" style="margin-top:12px" placeholder="Note for other editors, never public"></textarea>' +
     '<div class="inline" style="align-items:center"><button class="btn" data-act="saveNote" data-id="' + v.id + '">Save note</button>' +
-    (v.extra && v.extra.research ? '<span class="none" style="font-size:12px">Research columns kept: ' + esc(Object.keys(v.extra.research).join(', ')) + '</span>' : '') +
     (v.extra && v.extra.osm_url ? '<span style="font-size:12px">' + link(v.extra.osm_url, 'OSM element') + '</span>' : '') + '</div>';
   return h;
 }
@@ -559,13 +728,12 @@ function field(fd, v){
 }
 function formHtml(v){
   var title = v ? 'Edit ' + esc(v.name) : 'Add a venue';
-  var eb = v ? 'Editing' : 'New listing';
-  return '<div class="sheet-head"><div><div class="eyebrow">' + eb + '</div><h2 id="sheetTitle">' + title + '</h2>' +
-    (v ? '' : '<div class="meta">Name is required. Everything else can be filled in later; unknowns stay marked as unknown.</div>') + '</div>' +
+  return '<div class="sheet-head"><div><span class="eyebrow">' + (v ? 'Editing' : 'New listing') + '</span><h2 id="sheetTitle">' + title + '</h2>' +
+    (v ? '' : '<div class="meta">Name is required. Unknowns stay unknown, never zero.</div>') + '</div>' +
     '<button class="x" data-close="1" aria-label="Close">×</button></div>' +
     '<div class="form">' + FIELDS.map(function(fd){ return field(fd, v); }).join('') + '</div>' +
     '<div class="inline" style="align-items:center"><button class="btn btn-ink" data-act="save" data-id="' + (v ? v.id : '') + '">' + (v ? 'Save changes' : 'Add venue') + '</button>' +
-    '<button class="btn-text" data-act="cancel">Cancel</button><span class="err" id="formErr" style="margin:0"></span></div>';
+    '<button class="btn-text" data-act="cancel">Cancel</button><span class="err" id="formErr" style="margin:0;display:none"></span></div>';
 }
 function readForm(){
   var out = {}, bad = null;
@@ -573,15 +741,15 @@ function readForm(){
     var el = $('f_' + fd.k); if (!el) return;
     var val = el.value.trim();
     if (fd.req && !val) bad = fd.l + ' is required';
-    if (fd.t === 'number') out[fd.k] = val === '' ? null : Number(val);
+    if (fd.t === 'number'){ var n = val === '' ? null : Number(val); out[fd.k] = (n === 0 && /capacity/.test(fd.k)) ? null : n; }
     else out[fd.k] = val === '' ? null : val;
   });
   if (out.state) out.state = out.state.toUpperCase().slice(0, 2);
-  if (out.status === 'closed' && !out.closed_on && out.status_since) out.closed_on = out.status_since;
+  if (GONE.indexOf(out.status) >= 0 && !out.closed_on && out.status_since) out.closed_on = out.status_since;
   return bad ? {error: bad} : out;
 }
 function loginHtml(note){
-  return '<div class="sheet-head"><div><div class="eyebrow">Editors</div><h2 id="sheetTitle">Editor sign in</h2>' +
+  return '<div class="sheet-head"><div><span class="eyebrow">Editors</span><h2 id="sheetTitle">Editor sign in</h2>' +
     '<div class="meta">' + (note || 'Adding venues, corrections and closures require an editor login.') + '</div></div>' +
     '<button class="x" data-close="1" aria-label="Close">×</button></div>' +
     '<div class="login"><label><span class="fl">Email</span><input type="email" id="email" autocomplete="username"></label>' +
@@ -589,14 +757,17 @@ function loginHtml(note){
     '<div><button class="btn btn-ink" id="loginBtn">Sign in</button><div class="err" id="loginErr" hidden>Sign-in failed. Check the email and password.</div></div></div>';
 }
 function methodHtml(){
-  return '<div class="sheet-head"><div><div class="eyebrow">Methodology</div><h2 id="sheetTitle">How the directory is kept</h2></div>' +
+  return '<div class="sheet-head"><div><span class="eyebrow">Methodology</span><h2 id="sheetTitle">How the directory is kept</h2></div>' +
     '<button class="x" data-close="1" aria-label="Close">×</button></div><div class="prose">' +
-    '<p><b>What counts.</b> Any room in Oregon and the Portland area that books live music: dedicated venues, bars and clubs with stages, theaters and halls, amphitheaters, DIY and all-ages spaces, breweries and restaurants with regular music.</p>' +
-    '<p><b>Where listings come from.</b> The first pass was seeded from OpenStreetMap (ODbL) and from research shared by regional music organizations. Editors then check each room against the venue itself: its website, its calendar, a phone call, a visit.</p>' +
-    '<p><b>Open, verified, closed.</b> A room is listed as open until a closure is recorded. “Verified” means an editor confirmed the listing on the date shown; unverified rooms carry a marker on their card. A closure is recorded with a date and, where known, a reason and a source. Closed rooms stay in the directory in their own ledger because the loss is the record.</p>' +
-    '<p><b>The numbers.</b> Open counts published rooms not recorded as closed. Closed since 2019 counts closures dated 2019 or later. All ages counts open rooms whose policy is all ages. Capacity lost sums the capacity of rooms closed since 2019.</p>' +
-    '<p><b>Who can change it.</b> Only editors. They sign in to add a room, fix a listing or record a closure. Nothing on this page can be edited by the public.</p>' +
-    '<p><button class="btn" data-nav="csv">Download the open venues as CSV</button></p></div>';
+    '<p><b>What counts.</b> Rooms in Oregon and the Portland area, including Southwest Washington, that present live music: dedicated venues, bars and clubs with stages, theaters and halls, arenas and amphitheaters, DIY and all-ages spaces, breweries and restaurants with a recurring music program, and civic and outdoor stages with a season. A facility with several independently booked rooms is listed once per room, and room capacities are never added together.</p>' +
+    '<p><b>Where listings come from.</b> A research pass completed on September 17, 2026 compiled each room from official venue websites and calendars, technical documents, local news, the Independent Venue Coalition list, Business Oregon’s ARPA live-event award records and OpenStreetMap, with a citation for each material claim. Every listing carries its sources. Editors then verify rooms one at a time against the venue itself.</p>' +
+    '<p><b>Researched is not verified.</b> “Researched” means the facts were compiled from the cited sources on the date shown. “Verified” means an editor confirmed the listing. Until a room is verified, treat capacity, ages and contacts as reported, not confirmed.</p>' +
+    '<p><b>Status.</b> Current rooms are <b>open</b> or <b>seasonal</b>. <b>Temporarily closed</b> rooms are shown separately and not counted as current. <b>Planned</b> rooms are announced or under construction and count as future capacity only. <b>Closed</b> means the room or business ended operations. <b>Ceased live music</b> means the business may remain open but no longer presents a recurring music program. A room with an unknown status is never published.</p>' +
+    '<p><b>Capacity.</b> Figures are shown as seated, standing or maximum, with whether the number was advertised by the venue or reported elsewhere. A blank capacity is unknown, never zero. Where sources disagree, the listing says so.</p>' +
+    '<p><b>Ages.</b> All ages, 21+, 18+, minors with an adult, or varies by event. “Varies by event” does not count toward the all-ages figure.</p>' +
+    '<p><b>The numbers.</b> Current venue rooms counts published rooms that are open or seasonal. Closed or ceased music counts rooms that shut or stopped presenting music since 2019. With a recorded capacity counts current rooms with any capacity figure. Planned counts announced rooms.</p>' +
+    '<p><b>Who can change it.</b> Only editors. They sign in to add a room, fix a listing, record a closure or verify a listing. Nothing on this page can be edited by the public.</p>' +
+    '<p><button class="btn" data-nav="csv">Download the current rooms as CSV</button></p></div>';
 }
 function renderSheet(){
   var scrim = $('scrim'), box = $('sheet');
@@ -608,14 +779,13 @@ function renderSheet(){
   var wasHidden = scrim.hidden;
   box.innerHTML = h;
   if (wasHidden){ lastFocus = document.activeElement; scrim.hidden = false; document.body.style.overflow = 'hidden'; scrim.scrollTop = 0; }
-  var first = box.querySelector(sheet.mode === 'login' ? '#email' : '.x');
-  if (first) first.focus();
+  if (wasHidden || sheet.mode === 'login'){ var first = box.querySelector(sheet.mode === 'login' ? '#email' : '.x'); if (first) first.focus(); }
 }
-function openSheet(s){ sheet = s; eventForm = false; render(); }
+function openSheet(s){ sheet = s; eventForm = false; showAllSources = false; render(); }
 function closeSheet(){ sheet = null; eventForm = false; render(); }
 function downloadCsv(){
-  var rows = venues.filter(inRegister).sort(byCap);
-  var cols = PUBLIC_COLS.filter(function(c){ return ['id','osm_id','published','created_at','updated_at'].indexOf(c) < 0; });
+  var rows = venues.filter(isCurrent).sort(byCap);
+  var cols = PUBLIC_COLS.filter(function(c){ return ['id','osm_id','published','created_at','updated_at','status_date_precision'].indexOf(c) < 0; });
   var lines = [cols.join(',')].concat(rows.map(function(v){ return cols.map(function(c){ var s = v[c] == null ? '' : String(v[c]); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }).join(','); }));
   var blob = new Blob([lines.join('\n')], {type: 'text/csv'});
   var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'oregon-venue-directory-' + TODAY + '.csv'; a.click();
@@ -645,28 +815,30 @@ async function act(a, id){
   var v = id != null ? byId(id) : null;
   try {
     if (a === 'verify'){
-      await updateVenue(id, {status: 'open', last_verified_on: TODAY, verified_by: user.email, status_since: v.status === 'open' ? v.status_since : TODAY});
+      var patch = {last_verified_on: TODAY, verified_by: user.email};
+      if (v.status === 'unknown'){ patch.status = 'open'; patch.status_since = TODAY; patch.status_date_precision = 'day'; }
+      await updateVenue(id, patch);
     } else if (a === 'edit'){ sheet = {mode:'edit', id: id}; eventForm = false;
     } else if (a === 'cancel'){ sheet = sheet && sheet.mode === 'edit' ? {mode:'detail', id: sheet.id} : null;
     } else if (a === 'save'){
       var data = readForm();
-      if (data.error){ $('formErr').textContent = data.error; return; }
+      if (data.error){ var er = $('formErr'); er.textContent = data.error; er.style.display = ''; return; }
       if (id){ await updateVenue(id, data); sheet = {mode:'detail', id: id}; }
       else { var made = await insertVenue(data); sheet = {mode:'detail', id: made.id}; view = 'register'; }
     } else if (a === 'event'){ eventForm = true;
     } else if (a === 'cancelEvent'){ eventForm = false;
     } else if (a === 'saveEvent'){
       var kind = $('evKind').value, when = $('evDate').value || null;
-      var ins = await sb.from('venue_events').insert({venue_id: id, kind: kind, occurred_on: when, detail: $('evDetail').value.trim() || null,
+      var ins = await sb.from('venue_events').insert({venue_id: id, kind: kind, occurred_on: when, date_precision: 'day', detail: $('evDetail').value.trim() || null,
         source_url: $('evSrc').value.trim() || null, created_by: user.email}).select(EDITOR_EVENT_COLS.join(',')).single();
       if (ins.error) throw ins.error;
       (events[id] = events[id] || []).unshift(ins.data);
       if ($('evSet').checked && EVENT_SETS_STATUS[kind]){
-        var patch = {status: EVENT_SETS_STATUS[kind], status_since: when};
-        if (kind === 'closed') patch.closed_on = when;
-        if (kind === 'opened' && when) patch.opened_year = +when.slice(0, 4);
-        if (kind === 'opened' || kind === 'reopened'){ patch.closed_on = null; patch.last_verified_on = TODAY; patch.verified_by = user.email; }
-        await updateVenue(id, patch);
+        var p2 = {status: EVENT_SETS_STATUS[kind], status_since: when, status_date_precision: 'day'};
+        if (kind === 'closed' || kind === 'ceased_live_music') p2.closed_on = when;
+        if (kind === 'opened' && when) p2.opened_year = +when.slice(0, 4);
+        if (kind === 'opened' || kind === 'reopened'){ p2.closed_on = null; p2.last_verified_on = TODAY; p2.verified_by = user.email; }
+        await updateVenue(id, p2);
       }
       eventForm = false;
     } else if (a === 'delev'){
@@ -693,8 +865,7 @@ function nav(action){
   else if (action === 'closures'){ view = 'register'; sheet = null; render(); var c = $('closed'); if (c) c.scrollIntoView({block:'start'}); }
   else if (action === 'drafts'){ view = 'drafts'; sheet = null; render(); window.scrollTo(0, 0); }
   else if (action === 'method'){ openSheet({mode:'method'}); }
-  else if (action === 'add'){ openSheet(editable() ? {mode:'add'} : {mode:'login', note:'Adding a venue requires an editor login. Editors are members of the coalition that maintains this directory.'}); }
-  else if (action === 'correct'){ openSheet(editable() ? sheet : {mode:'login', note:'Corrections are made by editors. Sign in to fix this listing, or ask an editor to.'}); }
+  else if (action === 'add'){ openSheet(editable() ? {mode:'add'} : {mode:'login', note:'Adding a venue requires an editor login.'}); }
   else if (action === 'login'){ openSheet({mode:'login'}); }
   else if (action === 'csv'){ downloadCsv(); }
   else if (action === 'signout'){ sb.auth.signOut().then(function(){ user = null; sheet = null; eventForm = false; view = 'register'; load(); }); }
@@ -707,9 +878,12 @@ document.addEventListener('click', function(e){
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;   // let the browser open the route in a new tab
     e.preventDefault(); openSheet({mode:'detail', id: +o.dataset.open}); return;
   }
+  var tg = e.target.closest('[data-toggle]');
+  if (tg){ if (tg.dataset.toggle === 'seed') showSeed = true; if (tg.dataset.toggle === 'earlier') showEarlier = true; if (tg.dataset.toggle === 'sources') showAllSources = true; render(); return; }
   var b = e.target.closest('[data-band]'); if (b){ f.band = b.dataset.band; render(); return; }
   var a = e.target.closest('[data-age]'); if (a){ f.age = a.dataset.age; render(); return; }
-  if (e.target.closest('[data-clear]')){ f = {city:'', kind:'', band:'any', age:'any'}; render(); return; }
+  if (e.target.closest('[data-booking]')){ f.booking = !f.booking; render(); return; }
+  if (e.target.closest('[data-clear]')){ f = {region:'', city:'', kind:'', band:'any', age:'any', booking:false}; render(); return; }
   if (e.target.closest('[data-close]')){ closeSheet(); return; }
   if (e.target.id === 'scrim'){ closeSheet(); return; }
   var act1 = e.target.closest('[data-act]');
@@ -719,7 +893,8 @@ document.addEventListener('click', function(e){
   if (e.target.id === 'loginBtn'){ signIn(); }
 });
 document.addEventListener('change', function(e){
-  if (e.target.id === 'citySel'){ f.city = e.target.value; render(); }
+  if (e.target.id === 'regionSel'){ f.region = e.target.value; render(); }
+  else if (e.target.id === 'citySel'){ f.city = e.target.value; render(); }
   else if (e.target.id === 'kindSel'){ f.kind = e.target.value; render(); }
 });
 document.addEventListener('keydown', function(e){
