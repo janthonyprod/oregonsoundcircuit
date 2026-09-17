@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="index, follow">
-<meta name="description" content="A growing directory of live music venues across Oregon: booking contacts, venue details, and information on openings and closures. Built to help musicians find places to play, venue operators connect, and music advocates identify where support is needed.">
+<meta name="description" content="A growing directory of live music venues across Oregon, with booking contacts, venue details, and information on openings and closures.">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Oregon Venue Directory</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -170,8 +170,7 @@ select,input,textarea,button{font:inherit;color:inherit}
 
 <section class="hero">
   <h1><span class="flood">Oregon&rsquo;s</span> Live Music Venue Directory</h1>
-  <p class="lead">A growing directory of live music venues across Oregon, bringing together booking contacts, venue details, and information on openings and closures. Built to help musicians find places to play, venue operators connect, and music advocates identify where support is needed.</p>
-  <p class="lead">This directory is in development. Help build it by <a href="#" data-nav="add">adding a venue</a> or <a href="#" data-nav="correct">contributing updated information</a>.</p>
+  <p class="lead">A growing directory of live music venues across Oregon, with booking contacts, venue details, and information on openings and closures.</p>
 </section>
 
 <section class="census" id="figures" aria-label="Counts"></section>
@@ -374,7 +373,8 @@ function renderNav(){
   var drafts = venues.filter(function(v){ return !v.published; }).length;
   var h = navItem('register', 'Directory', view === 'register' ? 'current' : '') + navItem('closures', 'Closures');
   if (editable()) h += navItem('drafts', 'Drafts <span class="tnum">' + drafts + '</span>', view === 'drafts' ? 'current' : '');
-  h += navItem('method', 'Methodology') + navItem('add', 'Add a venue');
+  h += navItem('method', 'Methodology');
+  if (editable()) h += navItem('add', 'Add a venue');
   h += editable() ? '<span class="who" title="' + esc(user.email) + '">' + esc(user.email.split('@')[0]) + '</span>' + navItem('signout', 'Sign out') : navItem('login', 'Editor sign in');
   $('nav').innerHTML = h;
 }
@@ -521,7 +521,7 @@ function detailHtml(v){
   if (editable()) h += editorTools(v);
   var verified = v.last_verified_on ? 'Last verified by an editor ' + fmt(v.last_verified_on) + (editable() && v.verified_by ? ' (' + esc(v.verified_by) + ')' : '') + '.' :
     'Not yet verified by an editor. Seeded from public data, so details may be out of date.';
-  h += '<p class="sheet-foot">' + verified + ' <a href="#" data-nav="correct">Corrections welcome</a>.</p>';
+  h += '<p class="sheet-foot">' + verified + '</p>';
   return h;
 }
 function editorTools(v){
@@ -595,7 +595,7 @@ function methodHtml(){
     '<p><b>Where listings come from.</b> The first pass was seeded from OpenStreetMap (ODbL) and from research shared by regional music organizations. Editors then check each room against the venue itself: its website, its calendar, a phone call, a visit.</p>' +
     '<p><b>Open, verified, closed.</b> A room is listed as open until a closure is recorded. “Verified” means an editor confirmed the listing on the date shown; unverified rooms carry a marker on their card. A closure is recorded with a date and, where known, a reason and a source. Closed rooms stay in the directory in their own ledger because the loss is the record.</p>' +
     '<p><b>The numbers.</b> Open counts published rooms not recorded as closed. Closed since 2019 counts closures dated 2019 or later. All ages counts open rooms whose policy is all ages. Capacity lost sums the capacity of rooms closed since 2019.</p>' +
-    '<p><b>Corrections.</b> Editors sign in to fix a listing or record a closure. If you run a room and something here is wrong, use the corrections link on the listing.</p>' +
+    '<p><b>Who can change it.</b> Only editors. They sign in to add a room, fix a listing or record a closure. Nothing on this page can be edited by the public.</p>' +
     '<p><button class="btn" data-nav="csv">Download the open venues as CSV</button></p></div>';
 }
 function renderSheet(){
