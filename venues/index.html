@@ -586,7 +586,7 @@ function renderResults(){
   var planned = venues.filter(isPlanned).filter(matches).sort(byCap);
   if (planned.length) h += section('Planned', 'Announced or under construction. Future capacity, not current.') + '<div class="grid">' + planned.map(card).join('') + '</div>';
   var gone = venues.filter(isGone).sort(byClosure);
-  h += '<section class="closed" id="closed"><div class="closed-h"><h2>Openings &amp; closures</h2><div class="note">Rooms that have shut or stopped presenting live music since 2019. Kept in the directory because the loss is the record.</div></div><div class="ledger">' +
+  h += '<section class="closed" id="closed"><div class="closed-h"><h2>Openings &amp; closures</h2><div class="note">Rooms that have shut or stopped presenting live music since 2019.</div></div><div class="ledger">' +
     (gone.length ? gone.map(ledgerRow).join('') : '<p class="empty">No closures recorded yet.</p>') + '</div>';
   var tl = timelineRows();
   if (tl.length){
