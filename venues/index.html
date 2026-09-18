@@ -82,6 +82,7 @@ select,input,textarea,button{font:inherit;color:inherit}
 .capwrap{text-align:right;flex:0 0 auto}
 .capk{display:block;font-size:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.5;margin-top:3px;white-space:nowrap}
 .loc{margin-top:5px;font-size:11.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;opacity:.65}
+.badges{display:flex;flex-wrap:wrap;gap:5px}
 .badge{align-self:flex-start;background:transparent;color:var(--ink);border:2px solid var(--ink);padding:3px 8px;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase}
 .badge.aa{background:var(--flood);color:var(--stock);border-color:var(--flood)}
 .fields{border-top:2px solid var(--ink);padding-top:10px;display:flex;flex-direction:column;gap:8px}
@@ -220,7 +221,8 @@ var PUBLIC_COLS = ['id','slug','name','aka','kind','status','status_since','open
   'booking_email','booking_note','instagram','phone','genres','pay_model','sound_note','notes','sources','osm_id','published',
   'last_verified_on','created_at','updated_at',
   'venue_id','region','parent_venue','room_name','capacity_seated','capacity_standing','capacity_type','status_date_precision',
-  'closure_type','successor_venue','researched_on'];
+  'closure_type','successor_venue','researched_on',
+  'step_free_entry','accessible_restroom','all_gender_restroom','accessibility_note','inclusion_note'];
 var EDITOR_COLS = PUBLIC_COLS.concat(['liquor_license','extra','verified_by','created_by','updated_by',
   'status_confidence','capacity_confidence','ages_confidence','inclusion_basis','source_origin']);
 var PUBLIC_EVENT_COLS = ['id','venue_id','occurred_on','kind','detail','source_url','created_at','date_precision','capacity_at_event','source_title'];
@@ -249,6 +251,8 @@ var EVENT_KINDS = {opened:'Opened', closed:'Closed', reopened:'Reopened', tempor
 var EVENT_SETS_STATUS = {opened:'open', reopened:'open', closed:'closed', ceased_live_music:'ceased_live_music',
   temporarily_closed:'temporarily_closed', planned_opening:'planned', for_sale:'for_sale'};
 var CONF = {verified:'verified', corroborated:'corroborated', provisional:'provisional', conflicting:'conflicting', unknown:'unknown'};
+var YN = {yes:'Yes', no:'No', unknown:'Not recorded'};
+var ACCESS = [{key:'stepfree', col:'step_free_entry', label:'Step-free entry'}, {key:'allgender', col:'all_gender_restroom', label:'All-gender restrooms'}];
 var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 var BANDS = [
   {key:'any', label:'Any capacity', test:function(){ return true; }},
@@ -277,6 +281,10 @@ var FIELDS = [
   {k:'booking_email', l:'Booking email', t:'email'}, {k:'phone', l:'Phone'},
   {k:'instagram', l:'Instagram'}, {k:'genres', l:'Genres'},
   {k:'pay_model', l:'Pay model (guarantee, door split, other)'}, {k:'sound_note', l:'Stage and backline'},
+  {k:'step_free_entry', l:'Step-free entry', t:'select', o:YN}, {k:'accessible_restroom', l:'Accessible restroom', t:'select', o:YN},
+  {k:'all_gender_restroom', l:'All-gender restroom', t:'select', o:YN},
+  {k:'accessibility_note', l:'Accessibility notes (seating, parking, ASL, sensory)', t:'textarea', wide:true},
+  {k:'inclusion_note', l:'Inclusive programming and safety notes', t:'textarea', wide:true},
   {k:'booking_note', l:'Booking note', t:'textarea', wide:true},
   {k:'notes', l:'Public notes', t:'textarea', wide:true},
   {k:'sources', l:'Sources (URLs separated by |)', t:'textarea', wide:true},
@@ -290,7 +298,7 @@ function regionOptions(){ var o = {'': 'Not set'}; REGIONS.forEach(function(r){ 
 
 // ------------------------------------------------------------------ state
 var user = null, venues = [], events = {}, evidence = {}, notes = {};
-var f = {region:'', city:'', kind:'', band:'any', age:'any', booking:false};   // the rail, mirrored in the query string
+var f = {region:'', city:'', kind:'', band:'any', age:'any', booking:false, access:[]};   // the rail, mirrored in the query string
 var view = 'register';                                // register | drafts (editors)
 var sheet = null;                                     // {mode: detail|edit|add|login|method, id}
 var eventForm = false, lastFocus = null, showSeed = false, showAllSources = false, showEarlier = false;
@@ -348,9 +356,10 @@ function matches(v){
   if (f.age === 'all_ages' && v.ages !== 'all_ages') return false;
   if (f.age === '21_plus' && v.ages !== '21_plus') return false;
   if (f.booking && !hasBooking(v)) return false;
+  for (var i = 0; i < f.access.length; i++){ var acc = ACCESS.filter(function(a){ return a.key === f.access[i]; })[0]; if (acc && v[acc.col] !== 'yes') return false; }
   return true;
 }
-function filtered(){ return !!(f.region || f.city || f.kind || f.band !== 'any' || f.age !== 'any' || f.booking); }
+function filtered(){ return !!(f.region || f.city || f.kind || f.band !== 'any' || f.age !== 'any' || f.booking || f.access.length); }
 function byCap(a, b){
   var ca = capMax(a), cb = capMax(b);
   if (ca == null && cb == null) return a.name.localeCompare(b.name);
@@ -374,6 +383,7 @@ function readUrl(){
   f.band = BANDS.some(function(b){ return b.key === q.get('cap'); }) ? q.get('cap') : 'any';
   f.age = AGE_CHIPS.some(function(a){ return a.key === q.get('ages'); }) ? q.get('ages') : 'any';
   f.booking = q.get('booking') === '1';
+  f.access = (q.get('access') || '').split(',').filter(function(k){ return ACCESS.some(function(a){ return a.key === k; }); });
   var m = location.pathname.match(/^\/venues\/([^\/]+)\/?$/);
   var slug = m && m[1] !== 'index.html' ? decodeURIComponent(m[1]) : (location.hash.length > 1 ? decodeURIComponent(location.hash.slice(1)) : '');
   var hit = slug ? bySlug(slug) : null;
@@ -388,6 +398,7 @@ function urlFor(slug){
   if (f.band !== 'any') q.set('cap', f.band);
   if (f.age !== 'any') q.set('ages', f.age);
   if (f.booking) q.set('booking', '1');
+  if (f.access.length) q.set('access', f.access.join(','));
   var s = q.toString();
   return BASE + (slug ? '/' + encodeURIComponent(slug) : '') + (s ? '?' + s : '');
 }
@@ -484,6 +495,9 @@ function renderRail(){
     return '<button class="chip' + (a.key === f.age ? ' active' : '') + '" data-age="' + a.key + '">' + a.label + '</button>';
   }).join('') + '</div></div>';
   h += '<div class="chips"><span class="lbl">Booking</span><div class="chip-list"><button class="chip' + (f.booking ? ' active' : '') + '" data-booking="1">Has a booking contact</button></div></div>';
+  h += '<div class="chips"><span class="lbl">Access</span><div class="chip-list">' + ACCESS.map(function(a){
+    return '<button class="chip' + (f.access.indexOf(a.key) >= 0 ? ' active' : '') + '" data-access="' + a.key + '">' + a.label + '</button>';
+  }).join('') + '</div></div>';
   h += '<button class="clear" data-clear="1">Clear filters</button>';
   $('rail').innerHTML = h;
 }
@@ -523,6 +537,12 @@ function bookingText(v){   // card: the card itself is a link, so no anchors ins
   if (v.booking_url) return esc(domain(v.booking_url)) + ' <span class="none">(booking page)</span>';
   return '';
 }
+function badges(v){
+  var b = [];
+  if (v.ages && v.ages !== 'unknown') b.push('<span class="badge' + (v.ages === 'all_ages' ? ' aa' : '') + '">' + agesL(v) + '</span>');
+  ACCESS.forEach(function(a){ if (v[a.col] === 'yes') b.push('<span class="badge">' + a.label + '</span>'); });
+  return b.length ? '<div class="badges">' + b.join('') + '</div>' : '';
+}
 function card(v){
   var fields = '';
   if (hasBooking(v)) fields += '<div><div class="fl">Booking</div><div class="fv">' + bookingText(v) + '</div></div>';
@@ -530,7 +550,7 @@ function card(v){
   return '<a class="card" href="' + urlFor(v.slug) + '" data-open="' + v.id + '">' +
     '<div>' + (v.parent_venue ? '<div class="parent">' + esc(v.parent_venue) + '</div>' : '') +
     '<div class="ident"><h3>' + esc(v.name) + '</h3>' + capShort(v) + '</div><div class="loc">' + locLine(v) + '</div></div>' +
-    (v.ages && v.ages !== 'unknown' ? '<span class="badge' + (v.ages === 'all_ages' ? ' aa' : '') + '">' + agesL(v) + '</span>' : '') +
+    badges(v) +
     (fields ? '<div class="fields">' + fields + '</div>' : '') + '</a>';
 }
 function ledgerRow(v){
@@ -634,6 +654,8 @@ function detailRows(v){
   if (v.ownership !== 'unknown' || v.owner_operator) rows.push(['Ownership', (v.ownership !== 'unknown' ? OWNERSHIP[v.ownership] : '') + (v.owner_operator ? (v.ownership !== 'unknown' ? ' · ' : '') + esc(v.owner_operator) : '')]);
   rows.push(['Booking', bookingHtml(v)]);
   if (v.sound_note) rows.push(['Stage &amp; backline', esc(v.sound_note)]);
+  var acc = accessText(v); if (acc) rows.push(['Accessibility', acc]);
+  if (v.inclusion_note) rows.push(['Inclusion', esc(v.inclusion_note)]);
   if (v.website) rows.push(['Website', link(v.website)]);
   if (v.instagram) rows.push(['Instagram', link(/^https?:/.test(v.instagram) ? v.instagram : 'https://instagram.com/' + v.instagram.replace(/^@/, ''), v.instagram.replace(/^https?:\/\/(www\.)?instagram\.com\//, '@').replace(/\/$/, ''))]);
   if (v.phone) rows.push(['Phone', esc(v.phone)]);
@@ -648,6 +670,17 @@ function detailRows(v){
   if (v.notes) rows.push(['Notes', esc(v.notes)]);
   if (editable() && v.liquor_license) rows.push(['OLCC license', esc(v.liquor_license)]);
   return rows;
+}
+function accessText(v){
+  var yes = [], no = [];
+  [['step_free_entry', 'step-free entry'], ['accessible_restroom', 'accessible restroom'], ['all_gender_restroom', 'all-gender restroom']].forEach(function(p){
+    if (v[p[0]] === 'yes') yes.push(p[1]); else if (v[p[0]] === 'no') no.push('no ' + p[1]);
+  });
+  var parts = yes.concat(no);
+  if (!parts.length && !v.accessibility_note) return '';
+  var t = parts.length ? parts.join(', ') : '';
+  t = t ? t.charAt(0).toUpperCase() + t.slice(1) : '';
+  return esc(t) + (v.accessibility_note ? (t ? '<br>' : '') + '<span class="none">' + esc(v.accessibility_note) + '</span>' : '');
 }
 function sourcesHtml(v){
   var ev = (evidence[v.id] || []).filter(function(x){ return x.field_name !== 'activity'; });
@@ -765,6 +798,7 @@ function methodHtml(){
     '<p><b>Status.</b> Current rooms are <b>open</b> or <b>seasonal</b>. <b>Temporarily closed</b> rooms are shown separately and not counted as current. <b>Planned</b> rooms are announced or under construction and count as future capacity only. <b>Closed</b> means the room or business ended operations. <b>Ceased live music</b> means the business may remain open but no longer presents a recurring music program. A room with an unknown status is never published.</p>' +
     '<p><b>Capacity.</b> Figures are shown as seated, standing or maximum, with whether the number was advertised by the venue or reported elsewhere. A blank capacity is unknown, never zero. Where sources disagree, the listing says so.</p>' +
     '<p><b>Ages.</b> All ages, 21+, 18+, minors with an adult, or varies by event. “Varies by event” does not count toward the all-ages figure.</p>' +
+    '<p><b>Accessibility and inclusion.</b> Step-free entry, accessible restrooms, all-gender restrooms, and notes on inclusive programming and safety are recorded by editors when they verify a room. Blank means not yet recorded, not no.</p>' +
     '<p><b>The numbers.</b> Current venue rooms counts published rooms that are open or seasonal. Closed or ceased music counts rooms that shut or stopped presenting music since 2019. With a recorded capacity counts current rooms with any capacity figure. Planned counts announced rooms.</p>' +
     '<p><b>Who can change it.</b> Only editors. They sign in to add a room, fix a listing, record a closure or verify a listing. Nothing on this page can be edited by the public.</p>' +
     '<p><button class="btn" data-nav="csv">Download the current rooms as CSV</button></p></div>';
@@ -883,7 +917,8 @@ document.addEventListener('click', function(e){
   var b = e.target.closest('[data-band]'); if (b){ f.band = b.dataset.band; render(); return; }
   var a = e.target.closest('[data-age]'); if (a){ f.age = a.dataset.age; render(); return; }
   if (e.target.closest('[data-booking]')){ f.booking = !f.booking; render(); return; }
-  if (e.target.closest('[data-clear]')){ f = {region:'', city:'', kind:'', band:'any', age:'any', booking:false}; render(); return; }
+  if (e.target.closest('[data-clear]')){ f = {region:'', city:'', kind:'', band:'any', age:'any', booking:false, access:[]}; render(); return; }
+  var ac = e.target.closest('[data-access]'); if (ac){ var k = ac.dataset.access; f.access = f.access.indexOf(k) >= 0 ? f.access.filter(function(x){ return x !== k; }) : f.access.concat([k]); render(); return; }
   if (e.target.closest('[data-close]')){ closeSheet(); return; }
   if (e.target.id === 'scrim'){ closeSheet(); return; }
   var act1 = e.target.closest('[data-act]');
