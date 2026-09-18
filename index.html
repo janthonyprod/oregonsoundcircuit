@@ -64,6 +64,9 @@ p{text-wrap:pretty}
 .chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .chip{background:transparent;color:var(--ink);border:1.5px solid var(--ink);padding:4px 9px;font-size:11px;font-weight:600;letter-spacing:.06em}
 .chip.on{background:var(--ink);color:var(--stock)}
+.chip .n{opacity:.55;margin-left:4px;font-feature-settings:'tnum' 1}
+.chip.on .n{opacity:.7}
+.states{flex:1 1 100%;padding-top:2px}
 .bar input{flex:1 1 200px;min-width:170px;background:var(--stock);border:2px solid var(--ink);border-radius:0;padding:6px 9px;font-size:13.5px;-webkit-appearance:none}
 .bar input:focus{outline:2px solid var(--flood);outline-offset:0}
 /* list */
@@ -205,6 +208,7 @@ footer{margin:40px 18px 0;padding:12px 0 40px;font-size:12px;line-height:1.6;opa
     <div class="chips"><span class="micro">Where</span><span id="whereChips" class="chips"></span></div>
     <input type="search" id="search" placeholder="Search number, title, sponsor" aria-label="Search">
     <button class="tbtn" id="resetBtn" type="button">Reset</button>
+    <div class="chips states" id="stateRow" hidden><span class="micro">State</span><span id="stateChips" class="chips"></span></div>
   </section>
 
   <main id="list"></main>
@@ -260,7 +264,7 @@ var WHERE_LABEL = {OR: 'Oregon', US: 'Federal', other: 'Other states'};
 var POSITIONS = [['support', 'Support'], ['oppose', 'Oppose'], ['watch', 'Watch']];
 var POS_LABEL = {support: 'Support', oppose: 'Oppose', watch: 'Watch'};
 
-var state = {tab: 'active', topic: 'all', where: 'all', q: '', quick: null, open: null};
+var state = {tab: 'active', topic: 'all', where: 'all', st: null, q: '', quick: null, open: null};  // st: one state code under Other states
 var user = null, uid = null, publicMode = false, schemaReady = true, threadReady = true, marksReady = true;
 var bills = [], billById = {}, groupOf = {}, marks = {}, threads = {}, lastRun = null, editing = null;
 
@@ -518,7 +522,8 @@ function inTab(b){
   if (state.tab === 'watch') return flagged(b) || isMine(b);
   return statusOf(b) === state.tab;
 }
-function pass(b){
+// everything but the state chip, so the chips can count what each state would show
+function passBase(b){
   if (!inTab(b)) return false;
   if (state.topic !== 'all' && b.lane !== state.topic) return false;
   if (state.where !== 'all' && whereOf(b) !== state.where) return false;
@@ -526,6 +531,7 @@ function pass(b){
   if (state.quick === 'dated' && !inWindow(b)) return false;
   return true;
 }
+function pass(b){ return passBase(b) && (!state.st || b.jurisdiction === state.st); }
 function tabCount(key){
   var save = state.tab; state.tab = key;
   var n = collapse(bills.filter(inTab)).length;
@@ -803,7 +809,7 @@ function groupsFor(items){
   var labelOf = byTopic ? LANE_LABEL : WHERE_LABEL;
   return order.map(function(k){
     var rows = items.filter(function(it){ return keyOf(it.b) === k; }).sort(function(x, y){ return groupSort(x.b, y.b); });
-    return {label: labelOf[k], rows: rows, note: rows.some(function(it){ return datedOf(it.b); }) ? 'Dated items first' : (state.tab === 'active' ? 'Furthest along first' : 'Most recent first')};
+    return {label: (k === 'other' && state.st) ? state.st : labelOf[k], rows: rows, note: rows.some(function(it){ return datedOf(it.b); }) ? 'Dated items first' : (state.tab === 'active' ? 'Furthest along first' : 'Most recent first')};
   }).filter(function(g){ return g.rows.length; });
 }
 function render(){
@@ -868,13 +874,29 @@ function drawChips(){
   var t = $('topicChips'); t.innerHTML = '';
   TOPIC_CHIPS.forEach(function(c){ t.appendChild(btn(esc(c[1]), 'chip' + (state.topic === c[0] ? ' on' : ''), function(){ state.topic = c[0]; render(); })); });
   var w = $('whereChips'); w.innerHTML = '';
-  WHERE_CHIPS.forEach(function(c){ w.appendChild(btn(esc(c[1]), 'chip' + (state.where === c[0] ? ' on' : ''), function(){ state.where = c[0]; render(); })); });
+  WHERE_CHIPS.forEach(function(c){ w.appendChild(btn(esc(c[1]), 'chip' + (state.where === c[0] ? ' on' : ''), function(){ state.where = c[0]; state.st = null; render(); })); });
+  // one chip per state under Other states, counted for the current tab, topic and search
+  var row = $('stateRow'), s = $('stateChips'); s.innerHTML = '';
+  row.hidden = state.where !== 'other';
+  if (row.hidden) return;
+  var save = state.st; state.st = null;
+  var items = collapse(bills.filter(passBase)).filter(function(it){ return matchesQuery(it.b, it.members); });
+  state.st = save;
+  var counts = {};
+  items.forEach(function(it){ counts[it.b.jurisdiction] = (counts[it.b.jurisdiction] || 0) + 1; });
+  var codes = Object.keys(counts).sort(function(a, b){ return counts[b] - counts[a] || (a < b ? -1 : 1); });
+  s.appendChild(btn('All states<span class="n">' + items.length + '</span>', 'chip' + (!state.st ? ' on' : ''), function(){ state.st = null; render(); }));
+  codes.forEach(function(code){
+    s.appendChild(btn(esc(code) + '<span class="n">' + counts[code] + '</span>', 'chip' + (state.st === code ? ' on' : ''), function(){ state.st = state.st === code ? null : code; render(); }));
+  });
+  if (state.st && !counts[state.st]) s.appendChild(btn(esc(state.st) + '<span class="n">0</span>', 'chip on', function(){ state.st = null; render(); }));
 }
 function syncUrl(){
   var p = [];
   if (state.tab !== 'active') p.push('tab=' + state.tab);
   if (state.topic !== 'all') p.push('topic=' + state.topic);
   if (state.where !== 'all') p.push('where=' + state.where);
+  if (state.st) p.push('state=' + state.st);
   if (state.q) p.push('q=' + encodeURIComponent(state.q));
   if (state.quick) p.push('quick=' + state.quick);
   if (state.open) p.push('bill=' + state.open);
@@ -886,6 +908,7 @@ function readUrl(){
   if (TABS.some(function(t){ return t[0] === q.get('tab'); })) state.tab = q.get('tab');
   if (TOPIC_CHIPS.some(function(t){ return t[0] === q.get('topic'); })) state.topic = q.get('topic');
   if (WHERE_CHIPS.some(function(t){ return t[0] === q.get('where'); })) state.where = q.get('where');
+  if (/^[A-Z]{2}$/.test(q.get('state') || '') && q.get('state') !== 'OR' && q.get('state') !== 'US'){ state.st = q.get('state'); state.where = 'other'; }
   if (q.get('q')) state.q = q.get('q').trim().toLowerCase();
   if (q.get('quick') === 'review' || q.get('quick') === 'dated') state.quick = q.get('quick');
   if (q.get('bill') && /^\d+$/.test(q.get('bill'))) state.open = +q.get('bill');
@@ -894,7 +917,7 @@ function readUrl(){
 
 $('cellReview').onclick = function(){ state.quick = state.quick === 'review' ? null : 'review'; state.tab = 'active'; render(); };
 $('cellDated').onclick = function(){ state.quick = state.quick === 'dated' ? null : 'dated'; state.tab = 'active'; render(); };
-$('resetBtn').onclick = function(){ state.tab = 'active'; state.topic = 'all'; state.where = 'all'; state.q = ''; state.quick = null; $('search').value = ''; render(); };
+$('resetBtn').onclick = function(){ state.tab = 'active'; state.topic = 'all'; state.where = 'all'; state.st = null; state.q = ''; state.quick = null; $('search').value = ''; render(); };
 $('search').addEventListener('input', function(e){ state.q = e.target.value.trim().toLowerCase(); render(); });
 
 function showLogin(){ $('loginScreen').style.display = 'flex'; $('app').hidden = true; $('backBtn').style.display = publicMode ? 'inline-block' : 'none'; $('email').focus(); }
