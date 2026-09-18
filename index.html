@@ -137,6 +137,7 @@ footer a{color:var(--text-secondary)}
     <input type="email" id="email" placeholder="Email" autocomplete="username">
     <input type="password" id="pass" placeholder="Password" autocomplete="current-password">
     <button id="loginBtn" class="btn btn-primary" style="width:100%;padding:9px">Sign in</button>
+    <button id="backBtn" class="btn btn-link" style="display:none;width:100%;margin-top:8px">Back to the tracker</button>
   </div>
 </div>
 
@@ -502,20 +503,26 @@ function panel(b, members){
   var mine = marks[b.id];
   // one line: your own list on the left, the committee's shared marks on the right
   var act = el('div', 'actions');
-  if (!marksReady) act.appendChild(el('span', 'lbl', 'Private lists are not set up yet.'));
-  else if (mine) act.appendChild(btn('Remove from my list', 'btn', function(){ setMine(b, false); }));
-  else act.appendChild(btn('Add to my list', 'btn btn-primary', function(){ setMine(b, true); }));
-  if (marksReady) act.appendChild(btn(mine && mine.note ? 'Edit my note' : 'My note', 'btn btn-link', function(){ myNoteBox(p, b); }));
-  act.appendChild(el('span', 'sep'));
-  act.appendChild(el('span', 'lbl', 'Committee'));
-  if (b.review_status !== 'relevant') act.appendChild(btn('Relevant', 'btn btn-green', function(){ setReview(b, 'relevant', members); }));
-  if (b.review_status !== 'dismissed'){
-    var dis = btn('Dismiss for everyone', 'btn btn-red', function(){ setReview(b, 'dismissed', members); });
-    dis.title = 'Moves this bill to Archive, Dismissed, for every member. Clear brings it back.';
-    act.appendChild(dis);
+  if (!user){
+    act.appendChild(el('span', 'lbl', 'Committee members sign in to mark bills and leave notes.'));
+    act.appendChild(btn('Sign in', 'btn btn-link', function(){ showLogin(); }));
   }
-  if (b.review_status !== 'new') act.appendChild(btn('Clear', 'btn', function(){ setReview(b, 'new', members); }));
-  act.appendChild(btn(b.notes ? 'Edit committee note' : 'Committee note', 'btn btn-link', function(){ noteBox(p, b); }));
+  if (user && !marksReady) act.appendChild(el('span', 'lbl', 'Private lists are not set up yet.'));
+  else if (user && mine) act.appendChild(btn('Remove from my list', 'btn', function(){ setMine(b, false); }));
+  else if (user) act.appendChild(btn('Add to my list', 'btn btn-primary', function(){ setMine(b, true); }));
+  if (user && marksReady) act.appendChild(btn(mine && mine.note ? 'Edit my note' : 'My note', 'btn btn-link', function(){ myNoteBox(p, b); }));
+  if (user){
+    act.appendChild(el('span', 'sep'));
+    act.appendChild(el('span', 'lbl', 'Committee'));
+    if (b.review_status !== 'relevant') act.appendChild(btn('Relevant', 'btn btn-green', function(){ setReview(b, 'relevant', members); }));
+    if (b.review_status !== 'dismissed'){
+      var dis = btn('Dismiss for everyone', 'btn btn-red', function(){ setReview(b, 'dismissed', members); });
+      dis.title = 'Moves this bill to Archive, Dismissed, for every member. Clear brings it back.';
+      act.appendChild(dis);
+    }
+    if (b.review_status !== 'new') act.appendChild(btn('Clear', 'btn', function(){ setReview(b, 'new', members); }));
+    act.appendChild(btn(b.notes ? 'Edit committee note' : 'Committee note', 'btn btn-link', function(){ noteBox(p, b); }));
+  }
   p.appendChild(act);
   p.appendChild(el('div', 'editor'));
 
@@ -526,7 +533,7 @@ function panel(b, members){
   if (official) links.push('<a href="' + esc(official) + '" target="_blank" rel="noopener">' + (b.source_url || b.source !== 'legiscan' ? 'Official page' : 'Bill page (LegiScan)') + '</a>');
   if (b.text_url && b.text_url !== official) links.push('<a href="' + esc(b.text_url) + '" target="_blank" rel="noopener">Bill text</a>');
   if (links.length) h += '<div class="links">' + links.join(' · ') + '</div>';
-  if (b.notes) h += '<div class="notes"><b>Committee note</b>' + esc(b.notes) + (b.reviewed_by ? ' <i>' + esc(b.reviewed_by) + ', ' + esc((b.reviewed_at || '').slice(0, 10)) + '</i>' : '') + '</div>';
+  if (b.notes) h += '<div class="notes"><b>Committee note</b>' + esc(b.notes) + (user && b.reviewed_by ? ' <i>' + esc(b.reviewed_by) + ', ' + esc((b.reviewed_at || '').slice(0, 10)) + '</i>' : '') + '</div>';
   if (mine && mine.note) h += '<div class="mynote"><b>My note</b>' + esc(mine.note) + ' <i class="dim">(only you see this)</i></div>';
   var ov = overviewOf(b.description);
   var hasFull = ov && ov.full.length > ov.text.length + 20;
@@ -871,13 +878,19 @@ function drawTabs(){
   });
 }
 
+var publicMode = false;
+function showLogin(){ $('loginScreen').style.display = 'flex'; $('app').style.display = 'none'; $('backBtn').style.display = publicMode ? 'block' : 'none'; $('email').focus(); }
+function showApp(){ $('loginScreen').style.display = 'none'; $('app').style.display = 'block'; $('outBtn').textContent = user ? 'Sign out' : 'Sign in'; loadData(); }
 function show(session){
   var loggedIn = !!session;
   user = loggedIn ? (session.user.email || session.user.id) : null;
   uid = loggedIn ? session.user.id : null;
-  $('loginScreen').style.display = loggedIn ? 'none' : 'flex';
-  $('app').style.display = loggedIn ? 'block' : 'none';
-  if (loggedIn) loadData();
+  if (loggedIn){ showApp(); return; }
+  // no session: if the database lets the public read bills, show a read-only tracker, else the login wall
+  sb.from('leg_bills').select('id').limit(1).then(function(r){
+    publicMode = !r.error && !!(r.data && r.data.length);
+    if (publicMode) showApp(); else showLogin();
+  });
 }
 
 $('loginBtn').onclick = function(){
@@ -890,7 +903,8 @@ $('loginBtn').onclick = function(){
 };
 $('pass').addEventListener('keydown', function(e){ if (e.key === 'Enter') $('loginBtn').click(); });
 $('email').addEventListener('keydown', function(e){ if (e.key === 'Enter') $('pass').focus(); });
-$('outBtn').onclick = function(){ sb.auth.signOut().then(function(){ show(null); }); };
+$('outBtn').onclick = function(){ if (user) sb.auth.signOut().then(function(){ show(null); }); else showLogin(); };
+$('backBtn').onclick = function(){ show(null); };
 $('refreshBtn').onclick = loadData;
 $('search').addEventListener('input', function(e){ query = e.target.value.trim().toLowerCase(); render(); });
 Array.prototype.forEach.call(document.querySelectorAll('.toolbar .chip[data-topic]'), function(ch){
