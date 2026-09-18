@@ -149,6 +149,7 @@ dl.meta dd{margin:0;font-size:13px;font-weight:500;line-height:1.35;text-wrap:pr
 .post{background:var(--ink);color:var(--stock);border:2px solid var(--ink);padding:8px 16px;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase}
 .none{margin:44px 0;font-size:15px;font-weight:500}
 .none span{opacity:.55}
+.jump{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
 .loading{margin:30px 0;font-size:13px;opacity:.6}
 footer{margin:40px 18px 0;padding:12px 0 40px;font-size:12px;line-height:1.6;opacity:.7;max-width:90ch;text-wrap:pretty;border-top:1px solid var(--ink)}
 @media (max-width:640px){
@@ -828,8 +829,19 @@ function render(){
     list.appendChild(sec);
   });
   if (!groups.length){
-    if (state.tab === 'active' && state.where === 'OR' && !state.q && !state.quick)
-      list.appendChild(el('p', 'none', 'Nothing pending in Oregon. <span>The next session opens early in the year and presession filings usually post from December; they appear here as OLIS publishes them. Oregon laws on the books are under Enacted.</span>'));
+    if (state.tab === 'active' && state.where === 'OR' && !state.q && !state.quick){
+      // Oregon is quiet between sessions: point at where its bills actually are
+      var p = el('p', 'none', 'Nothing pending in Oregon. <span>The next session opens early in the year and presession filings usually post from December; they appear here as OLIS publishes them.</span>');
+      var jump = el('div', 'jump');
+      [['enacted', 'Oregon laws on the books'], ['dead', 'Oregon bills that did not pass']].forEach(function(t){
+        var save = state.tab; state.tab = t[0];
+        var n = collapse(bills.filter(pass)).length;
+        state.tab = save;
+        if (n) jump.appendChild(btn(n + ' · ' + t[1], 'b', function(){ state.tab = t[0]; render(); }));
+      });
+      if (jump.childNodes.length) p.appendChild(jump);
+      list.appendChild(p);
+    }
     else list.appendChild(el('p', 'none', 'Nothing matches those filters. <span>Reset, or widen the status tab.</span>'));
   }
   if (state.tab === 'notrel' && groups.length) list.appendChild(el('p', 'official', 'Set aside by a member, hidden by a keyword rule, or off the two topics. Nothing is deleted: open a row and use Move back to active.'));
