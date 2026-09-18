@@ -494,8 +494,9 @@ function renderRail(){
   h += '<div class="chips"><span class="lbl">Ages</span><div class="chip-list">' + AGE_CHIPS.map(function(a){
     return '<button class="chip' + (a.key === f.age ? ' active' : '') + '" data-age="' + a.key + '">' + a.label + '</button>';
   }).join('') + '</div></div>';
-  h += '<div class="chips"><span class="lbl">Booking</span><div class="chip-list"><button class="chip' + (f.booking ? ' active' : '') + '" data-booking="1">Has a booking contact</button></div></div>';
-  h += '<div class="chips"><span class="lbl">Access</span><div class="chip-list">' + ACCESS.map(function(a){
+  h += '<div class="chips"><span class="lbl">Booking</span><div class="chip-list"><button class="chip' + (!f.booking ? ' active' : '') + '" data-booking="any">Any</button>' +
+    '<button class="chip' + (f.booking ? ' active' : '') + '" data-booking="yes">Booking contact listed</button></div></div>';
+  h += '<div class="chips"><span class="lbl">Access</span><div class="chip-list"><button class="chip' + (!f.access.length ? ' active' : '') + '" data-access="any">Any</button>' + ACCESS.map(function(a){
     return '<button class="chip' + (f.access.indexOf(a.key) >= 0 ? ' active' : '') + '" data-access="' + a.key + '">' + a.label + '</button>';
   }).join('') + '</div></div>';
   h += '<button class="clear" data-clear="1">Clear filters</button>';
@@ -916,9 +917,9 @@ document.addEventListener('click', function(e){
   if (tg){ if (tg.dataset.toggle === 'seed') showSeed = true; if (tg.dataset.toggle === 'earlier') showEarlier = true; if (tg.dataset.toggle === 'sources') showAllSources = true; render(); return; }
   var b = e.target.closest('[data-band]'); if (b){ f.band = b.dataset.band; render(); return; }
   var a = e.target.closest('[data-age]'); if (a){ f.age = a.dataset.age; render(); return; }
-  if (e.target.closest('[data-booking]')){ f.booking = !f.booking; render(); return; }
+  var bk = e.target.closest('[data-booking]'); if (bk){ f.booking = bk.dataset.booking === 'yes'; render(); return; }
   if (e.target.closest('[data-clear]')){ f = {region:'', city:'', kind:'', band:'any', age:'any', booking:false, access:[]}; render(); return; }
-  var ac = e.target.closest('[data-access]'); if (ac){ var k = ac.dataset.access; f.access = f.access.indexOf(k) >= 0 ? f.access.filter(function(x){ return x !== k; }) : f.access.concat([k]); render(); return; }
+  var ac = e.target.closest('[data-access]'); if (ac){ var k = ac.dataset.access; f.access = k === 'any' ? [] : (f.access.indexOf(k) >= 0 ? f.access.filter(function(x){ return x !== k; }) : f.access.concat([k])); render(); return; }
   if (e.target.closest('[data-close]')){ closeSheet(); return; }
   if (e.target.id === 'scrim'){ closeSheet(); return; }
   var act1 = e.target.closest('[data-act]');
