@@ -93,12 +93,6 @@ select,input,textarea,button{font:inherit;color:inherit}
 .sec{margin-top:44px;border-top:3px solid var(--ink);padding-top:12px;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:baseline;justify-content:space-between}
 .sec h2{margin:0;font-family:Anton,sans-serif;font-weight:400;font-size:20px;letter-spacing:.06em;text-transform:uppercase}
 .sec .note{font-size:12px;opacity:.65;max-width:52ch;text-wrap:pretty}
-.tl{margin-top:8px}
-.tl-row{display:grid;grid-template-columns:104px minmax(0,1fr);gap:4px 16px;padding:10px 0;border-bottom:1px solid var(--ink)}
-.tl-when{font-family:Anton,sans-serif;font-weight:400;font-size:15px;text-transform:uppercase;color:var(--flood);font-feature-settings:'tnum' 1}
-.tl-what{font-size:13px;line-height:1.45;overflow-wrap:anywhere}
-.tl-what b{font-weight:600}
-.tl-what .k{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;opacity:.6;margin-right:8px}
 .src{font-size:13px;margin:6px 0 0;line-height:1.45;overflow-wrap:anywhere}
 .src .k{font-size:9.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.5;margin-left:6px}
 .seedlist .lrow{grid-template-columns:minmax(0,1fr) minmax(0,150px) 110px}
@@ -170,7 +164,6 @@ select,input,textarea,button{font:inherit;color:inherit}
   .cell{padding:14px 16px 12px}
   .cell .num{font-size:48px}
   .lrow,.seedlist .lrow{grid-template-columns:minmax(0,1fr) auto;gap:3px 14px}
-  .tl-row{grid-template-columns:1fr}
   .ln{grid-column:1;grid-row:1}.ly{grid-column:2;grid-row:1}.lc{grid-column:1;grid-row:2}.lcap{grid-column:2;grid-row:2}
   .form{grid-template-columns:1fr}
   .sheet{padding:20px 16px 24px;box-shadow:8px 8px 0 var(--flood)}
@@ -300,7 +293,7 @@ var user = null, venues = [], events = {}, evidence = {}, notes = {};
 var f = {region:'', city:'', kind:'', band:'any', age:'any', booking:false, access:[]};   // the rail, mirrored in the query string
 var view = 'register';                                // register | drafts (editors)
 var sheet = null;                                     // {mode: detail|edit|add|login|method, id}
-var eventForm = false, lastFocus = null, showSeed = false, showAllSources = false, showEarlier = false;
+var eventForm = false, lastFocus = null, showSeed = false, showAllSources = false;
 var BASE = '/venues';
 
 function localDay(d){ return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
@@ -448,7 +441,7 @@ function render(){ renderNav(); renderHeroLine(); renderFigures(); renderRail();
 function navItem(action, label, cls){ return '<button data-nav="' + action + '"' + (cls ? ' class="' + cls + '"' : '') + '>' + label + '</button>'; }
 function renderNav(){
   var queue = venues.filter(function(v){ return isDraft(v) && isResearched(v); }).length;
-  var h = navItem('register', 'Directory', view === 'register' ? 'current' : '') + navItem('closures', 'Openings &amp; closures');
+  var h = navItem('register', 'Directory', view === 'register' ? 'current' : '') + navItem('openings', 'Openings') + navItem('closures', 'Closures');
   if (editable()) h += navItem('drafts', 'Research queue <span class="tnum">' + queue + '</span>', view === 'drafts' ? 'current' : '');
   h += navItem('method', 'Methodology');
   if (editable()) h += navItem('add', 'Add a venue');
@@ -467,10 +460,11 @@ function renderHeroLine(){
   $('heroline').innerHTML = parts.join(' · ');
 }
 function renderFigures(){
-  var current = venues.filter(isCurrent), gone = venues.filter(isGone), planned = venues.filter(isPlanned);
+  var current = venues.filter(isCurrent), gone = venues.filter(isGone);
+  var opened = venues.filter(function(v){ var o = openingOf(v); return o && o.kind !== 'planned'; });
   var withCap = current.filter(function(v){ return capMax(v) != null; }).length;
   var figs = [[num(current.length), 'Current venue rooms', ''], [num(gone.length), 'Closed or ceased music', ' hot'],
-    [num(withCap), 'With a recorded capacity', ''], [num(planned.length), 'Planned', '']];
+    [num(withCap), 'With a recorded capacity', ''], [num(opened.length), 'Opened since 2019', '']];
   $('figures').innerHTML = figs.map(function(x){ return '<div class="cell' + x[2] + '"><div class="num">' + x[0] + '</div><div class="lab">' + x[1] + '</div></div>'; }).join('');
 }
 function renderRail(){
@@ -567,22 +561,35 @@ function seedRow(v){
 function section(title, note, id){
   return '<div class="sec"' + (id ? ' id="' + id + '"' : '') + '><h2>' + title + '</h2>' + (note ? '<div class="note">' + note + '</div>' : '') + '</div>';
 }
-function timelineRows(){
-  var rows = [];
-  Object.keys(events).forEach(function(k){
-    var v = byId(+k);
-    if (!v || !v.published) return;
-    events[k].forEach(function(e){ if (e.occurred_on) rows.push({e: e, v: v}); });
-  });
-  rows.sort(function(a, b){ return String(b.e.occurred_on).localeCompare(String(a.e.occurred_on)) || a.v.name.localeCompare(b.v.name); });
-  return rows;
+// A room's opening since 2019: planned rooms, rooms whose opened_year is 2019 or
+// later, and rooms with a dated reopening. The more recent of opened vs reopened wins.
+function openingOf(v){
+  if (!v.published) return null;
+  if (isPlanned(v)) return {year: v.opened_year || null, kind: 'planned'};
+  if (!isCurrent(v) && !isTemp(v)) return null;
+  var re = (events[v.id] || []).filter(function(e){ return e.kind === 'reopened' && String(e.occurred_on || '') >= '2019'; })
+    .sort(function(a, b){ return String(b.occurred_on).localeCompare(String(a.occurred_on)); })[0];
+  var reYear = re ? +String(re.occurred_on).slice(0, 4) : null;
+  var opened = v.opened_year && v.opened_year >= 2019 ? v.opened_year : null;
+  if (opened && (!reYear || opened >= reYear)) return {year: opened, kind: 'opened'};
+  if (reYear) return {year: reYear, kind: 'reopened'};
+  return null;
 }
-function timelineRow(r){
-  var e = r.e, v = r.v;
-  return '<div class="tl-row"><span class="tl-when">' + esc(fmtP(e.occurred_on, e.date_precision)) + '</span>' +
-    '<span class="tl-what"><span class="k">' + (EVENT_KINDS[e.kind] || EVENT_KINDS.other) + '</span><b><a href="' + urlFor(v.slug) + '" data-open="' + v.id + '">' + esc(v.name) + '</a></b>' +
-    (v.city ? ' <span class="none">' + esc(v.city) + '</span>' : '') + (e.detail ? '<br>' + esc(e.detail.length > 160 ? e.detail.slice(0, 157) + '...' : e.detail) : '') +
-    (e.source_url ? ' ' + link(e.source_url, 'source') : '') + '</span></div>';
+function openingRow(v){
+  var o = openingOf(v);
+  return '<a class="lrow" href="' + urlFor(v.slug) + '" data-open="' + v.id + '"><span class="ln">' + esc(v.name) + '</span>' +
+    '<span class="lc">' + esc(v.city || '') + (o.kind !== 'opened' ? ' · ' + o.kind : '') + '</span>' +
+    '<span class="lcap">' + (capMax(v) != null ? num(capMax(v)) : '') + '</span>' +
+    '<span class="ly">' + (o.year || '') + '</span></a>';
+}
+function byOpening(a, b){
+  var x = openingOf(a), y = openingOf(b);
+  var px = x.kind === 'planned' ? 1 : 0, py = y.kind === 'planned' ? 1 : 0;
+  return (py - px) || ((y.year || 0) - (x.year || 0)) || a.name.localeCompare(b.name);
+}
+function ledgerBlock(id, title, note, rows, empty){
+  return '<section class="closed" id="' + id + '"><div class="closed-h"><h2>' + title + '</h2><div class="note">' + note + '</div></div><div class="ledger">' +
+    (rows.length ? rows.join('') : '<p class="empty">' + empty + '</p>') + '</div></section>';
 }
 function renderResults(){
   var h = '';
@@ -603,18 +610,11 @@ function renderResults(){
   h += shown.length ? '<div class="grid">' + shown.map(card).join('') + '</div>' : '<p class="empty">No current rooms match those filters. <span>Try widening capacity.</span></p>';
   var temp = venues.filter(isTemp).filter(matches).sort(byCap);
   if (temp.length) h += section('Temporarily closed', 'Not counted as current, not yet a loss.') + '<div class="grid">' + temp.map(card).join('') + '</div>';
-  var planned = venues.filter(isPlanned).filter(matches).sort(byCap);
-  if (planned.length) h += section('Planned', 'Announced or under construction. Future capacity, not current.') + '<div class="grid">' + planned.map(card).join('') + '</div>';
+  // openings and closures are two ledgers, never mixed; each row opens the room's listing with its dated history
+  var opened = venues.filter(openingOf).sort(byOpening);
+  h += ledgerBlock('openings', 'Openings', 'Rooms that opened, reopened or were announced since 2019. Planned rooms are listed first and not counted as current.', opened.map(openingRow), 'No openings recorded yet.');
   var gone = venues.filter(isGone).sort(byClosure);
-  h += '<section class="closed" id="closed"><div class="closed-h"><h2>Openings &amp; closures</h2><div class="note">Rooms that have shut or stopped presenting live music since 2019.</div></div><div class="ledger">' +
-    (gone.length ? gone.map(ledgerRow).join('') : '<p class="empty">No closures recorded yet.</p>') + '</div>';
-  var tl = timelineRows();
-  if (tl.length){
-    var recent = tl.filter(function(r){ return String(r.e.occurred_on) >= '2019-01-01'; }), earlier = tl.length - recent.length;
-    h += section('Timeline', 'Dated openings, closures, reopenings and relocations, from cited sources.') + '<div class="tl">' + (showEarlier ? tl : recent).map(timelineRow).join('') +
-      (earlier && !showEarlier ? '<p class="empty" style="margin:14px 0 0"><button class="btn-text" data-toggle="earlier">Show ' + earlier + ' earlier events</button></p>' : '') + '</div>';
-  }
-  h += '</section>';
+  h += ledgerBlock('closed', 'Closures', 'Rooms that have shut or stopped presenting live music since 2019.', gone.map(ledgerRow), 'No closures recorded yet.');
   $('results').innerHTML = h;
 }
 function renderFoot(){
@@ -795,11 +795,11 @@ function methodHtml(){
     '<p><b>What counts.</b> Rooms in Oregon and the Portland area, including Southwest Washington, that present live music: dedicated venues, bars and clubs with stages, theaters and halls, arenas and amphitheaters, DIY and all-ages spaces, breweries and restaurants with a recurring music program, and civic and outdoor stages with a season. A facility with several independently booked rooms is listed once per room, and room capacities are never added together.</p>' +
     '<p><b>Where listings come from.</b> A research pass completed on September 17, 2026 compiled each room from official venue websites and calendars, technical documents, local news, the Independent Venue Coalition list, Business Oregon’s ARPA live-event award records and OpenStreetMap, with a citation for each material claim. Every listing carries its sources. Editors then verify rooms one at a time against the venue itself.</p>' +
     '<p><b>Researched is not verified.</b> “Researched” means the facts were compiled from the cited sources on the date shown. “Verified” means an editor confirmed the listing. Until a room is verified, treat capacity, ages and contacts as reported, not confirmed.</p>' +
-    '<p><b>Status.</b> Current rooms are <b>open</b> or <b>seasonal</b>. <b>Temporarily closed</b> rooms are shown separately and not counted as current. <b>Planned</b> rooms are announced or under construction and count as future capacity only. <b>Closed</b> means the room or business ended operations. <b>Ceased live music</b> means the business may remain open but no longer presents a recurring music program. A room with an unknown status is never published.</p>' +
+    '<p><b>Status.</b> Current rooms are <b>open</b> or <b>seasonal</b>. <b>Temporarily closed</b> rooms are shown separately and not counted as current. <b>Planned</b> rooms are announced or under construction; they head the Openings list and count as future capacity only. <b>Closed</b> means the room or business ended operations. <b>Ceased live music</b> means the business may remain open but no longer presents a recurring music program. A room with an unknown status is never published.</p>' +
     '<p><b>Capacity.</b> Figures are shown as seated, standing or maximum, with whether the number was advertised by the venue or reported elsewhere. A blank capacity is unknown, never zero. Where sources disagree, the listing says so.</p>' +
     '<p><b>Ages.</b> All ages, 21+, 18+, minors with an adult, or varies by event. “Varies by event” does not count toward the all-ages figure.</p>' +
     '<p><b>Accessibility and inclusion.</b> Step-free entry, accessible restrooms, all-gender restrooms, and notes on inclusive programming and safety are recorded by editors when they verify a room. Blank means not yet recorded, not no.</p>' +
-    '<p><b>The numbers.</b> Current venue rooms counts published rooms that are open or seasonal. Closed or ceased music counts rooms that shut or stopped presenting music since 2019. With a recorded capacity counts current rooms with any capacity figure. Planned counts announced rooms.</p>' +
+    '<p><b>The numbers.</b> Current venue rooms counts published rooms that are open or seasonal. Closed or ceased music counts rooms that shut or stopped presenting music since 2019. With a recorded capacity counts current rooms with any capacity figure. Opened since 2019 counts rooms that opened or reopened in 2019 or later; planned rooms are listed under Openings but not counted.</p>' +
     '<p><b>Who can change it.</b> Only editors. They sign in to add a room, fix a listing, record a closure or verify a listing. Nothing on this page can be edited by the public.</p>' +
     '<p><button class="btn" data-nav="csv">Download the current rooms as CSV</button></p></div>';
 }
@@ -896,7 +896,7 @@ async function act(a, id){
 // ------------------------------------------------------------------ wiring
 function nav(action){
   if (action === 'register'){ view = 'register'; sheet = null; render(); window.scrollTo(0, 0); }
-  else if (action === 'closures'){ view = 'register'; sheet = null; render(); var c = $('closed'); if (c) c.scrollIntoView({block:'start'}); }
+  else if (action === 'closures' || action === 'openings'){ view = 'register'; sheet = null; render(); var c = $(action === 'openings' ? 'openings' : 'closed'); if (c) c.scrollIntoView({block:'start'}); }
   else if (action === 'drafts'){ view = 'drafts'; sheet = null; render(); window.scrollTo(0, 0); }
   else if (action === 'method'){ openSheet({mode:'method'}); }
   else if (action === 'add'){ openSheet(editable() ? {mode:'add'} : {mode:'login', note:'Adding a venue requires an editor login.'}); }
@@ -913,7 +913,7 @@ document.addEventListener('click', function(e){
     e.preventDefault(); openSheet({mode:'detail', id: +o.dataset.open}); return;
   }
   var tg = e.target.closest('[data-toggle]');
-  if (tg){ if (tg.dataset.toggle === 'seed') showSeed = true; if (tg.dataset.toggle === 'earlier') showEarlier = true; if (tg.dataset.toggle === 'sources') showAllSources = true; render(); return; }
+  if (tg){ if (tg.dataset.toggle === 'seed') showSeed = true; if (tg.dataset.toggle === 'sources') showAllSources = true; render(); return; }
   var b = e.target.closest('[data-band]'); if (b){ f.band = b.dataset.band; render(); return; }
   var a = e.target.closest('[data-age]'); if (a){ f.age = a.dataset.age; render(); return; }
   var bk = e.target.closest('[data-booking]'); if (bk){ f.booking = bk.dataset.booking === 'yes'; render(); return; }
